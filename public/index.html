@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tickets Pulse — Plataforma de Ingressos (NoSQL Poliglota)</title>
+  <title>Tickets Pulse — Marco 2 (Arquitetura Poliglota NoSQL)</title>
   <style>
     :root {
       --bg: #0b0e14;
       --surface: #131822;
-      --surface-2: #19202d;
-      --border: #252e3f;
-      --text: #eef2f7;
+      --surface-2: #1a2130;
+      --border: #263044;
+      --text: #f1f5f9;
       --muted: #94a3b8;
       --accent: #ff5a36;
-      --accent-hover: #ff704f;
       --green: #22c55e;
       --blue: #3b82f6;
       --purple: #a855f7;
@@ -24,7 +23,7 @@
     * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
     body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.45; }
 
-    .container { max-width: 1220px; margin: 0 auto; padding: 20px; }
+    .container { max-width: 1360px; margin: 0 auto; padding: 18px 22px 40px; }
 
     /* Header */
     header {
@@ -32,14 +31,14 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      padding-bottom: 16px;
+      gap: 12px;
+      padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
-    .brand h1 { margin: 0; font-size: 1.45rem; letter-spacing: 0.4px; display: flex; align-items: center; gap: 10px; }
-    .brand-pill { font-size: 0.72rem; background: rgba(255, 90, 54, 0.16); color: #ff8a70; border: 1px solid rgba(255, 90, 54, 0.35); padding: 2px 8px; border-radius: 999px; font-weight: 600; }
-    .subtitle { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
+    .brand h1 { margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+    .brand-pill { font-size: 0.72rem; background: rgba(255, 90, 54, 0.16); color: #ff8a70; border: 1px solid rgba(255, 90, 54, 0.35); padding: 2px 9px; border-radius: 999px; font-weight: 600; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
 
     .badges { display: flex; flex-wrap: wrap; gap: 8px; }
     .badge {
@@ -47,7 +46,7 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 5px 11px;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -60,83 +59,123 @@
 
     /* Context Bar */
     .context-bar {
-      background: var(--surface);
+      background: linear-gradient(180deg, #161d2b 0%, #121722 100%);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px;
+      padding: 14px 16px;
       margin-bottom: 18px;
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
+      grid-template-columns: 1.2fr 1fr;
       gap: 16px;
       align-items: start;
     }
-    @media (max-width: 820px) { .context-bar { grid-template-columns: 1fr; } }
+    @media (max-width: 860px) { .context-bar { grid-template-columns: 1fr; } }
 
-    .event-meta {
-      margin-top: 8px;
-      font-size: 0.82rem;
+    .meta-row {
+      margin-top: 7px;
+      font-size: 0.8rem;
       color: var(--muted);
       display: flex;
       flex-wrap: wrap;
-      gap: 8px 14px;
+      gap: 6px 12px;
       align-items: center;
     }
-    .meta-chip {
+    .chip {
       background: var(--surface-2);
       border: 1px solid var(--border);
       padding: 2px 8px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: #cbd5e1;
     }
 
-    /* Tabs */
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-    .tab-btn {
-      background: var(--surface);
+    /* Section Titles */
+    .zone-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
       color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
+      margin: 0 0 10px;
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.15s ease;
+      font-weight: 700;
     }
-    .tab-btn:hover { color: var(--text); border-color: #3a465e; }
-    .tab-btn.active {
+    .zone-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* 3-Step Pipeline */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+      align-items: stretch;
+    }
+    @media (max-width: 1080px) { .steps-grid { grid-template-columns: 1fr; } }
+
+    /* Results 2x2 Grid */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 960px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-badge {
       background: var(--accent);
       color: #fff;
-      border-color: var(--accent);
-    }
-    .tab-count {
-      background: rgba(0, 0, 0, 0.28);
-      padding: 1px 7px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 2px 8px;
       border-radius: 999px;
-      font-size: 0.74rem;
+      white-space: nowrap;
     }
-    .tab-count.warn { background: rgba(239, 68, 68, 0.25); color: #fca5a5; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    .helper { font-size: 0.8rem; color: var(--muted); margin: 0; }
 
-    /* Form Controls & Buttons */
-    label { font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 5px; font-weight: 500; }
+    .tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; }
+    .tag-redis { background: rgba(255, 90, 54, 0.16); color: #ff8a70; }
+    .tag-mongo { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
+    .tag-cassandra { background: rgba(59, 130, 246, 0.16); color: #60a5fa; }
+    .tag-neo4j { background: rgba(168, 85, 247, 0.16); color: #c084fc; }
+
+    /* Form Controls */
+    label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 600; }
     select, input {
       width: 100%;
       background: #0b0e14;
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 9px 11px;
-      font-size: 0.88rem;
+      padding: 8px 10px;
+      font-size: 0.86rem;
       outline: none;
     }
     select:focus, input:focus { border-color: var(--blue); }
@@ -146,170 +185,148 @@
       color: #fff;
       border: none;
       border-radius: 8px;
-      padding: 9px 14px;
+      padding: 9px 13px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       transition: opacity 0.15s ease, transform 0.05s ease;
     }
     button:hover { opacity: 0.92; }
     button:active { transform: translateY(1px); }
     button.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
-    button.success { background: var(--green); color: #052e16; }
-    button.danger { background: rgba(239, 68, 68, 0.16); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
-    button.sm { padding: 5px 10px; font-size: 0.78rem; }
+    button.success { background: var(--green); color: #052e16; font-weight: 700; }
+    button.danger { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+    button.sm { padding: 5px 10px; font-size: 0.76rem; }
 
-    /* Cards & Layout */
-    .flow-grid {
-      display: grid;
-      grid-template-columns: 1.25fr 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-    @media (max-width: 900px) { .flow-grid { grid-template-columns: 1fr; } }
-    .stack { display: flex; flex-direction: column; gap: 16px; }
+    .row { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 110px; }
 
-    .card {
-      background: var(--surface);
+    /* Queue Status Banner */
+    .status-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.84rem;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .step-title {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin: 0;
-      font-size: 1.02rem;
-    }
-    .step-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-    .helper { font-size: 0.82rem; color: var(--muted); margin: 0; }
-
-    .tag { font-size: 0.71rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; }
-    .tag-redis { background: rgba(255, 90, 54, 0.16); color: #ff8a70; }
-    .tag-mongo { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
-    .tag-cassandra { background: rgba(59, 130, 246, 0.16); color: #60a5fa; }
-    .tag-neo4j { background: rgba(168, 85, 247, 0.16); color: #c084fc; }
-
-    /* Sector Selector Cards */
-    .sectors-grid { display: flex; flex-direction: column; gap: 10px; }
-    .sector-card {
       background: #0d1118;
+    }
+    .status-box.in-queue {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.45);
+      color: #bbf7d0;
+    }
+    .status-box.not-in-queue {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+    }
+
+    /* Sector Cards */
+    .sectors-list { display: flex; flex-direction: column; gap: 8px; }
+    .sector-card {
+      background: #0c1017;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 12px;
+      padding: 10px 12px;
       cursor: pointer;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      transition: all 0.15s ease;
     }
-    .sector-card:hover { border-color: #3f4c66; }
+    .sector-card:hover { border-color: #435370; }
     .sector-card.selected {
       border-color: var(--accent);
-      background: rgba(255, 90, 54, 0.08);
+      background: rgba(255, 90, 54, 0.09);
+      box-shadow: inset 0 0 0 1px var(--accent);
     }
-    .sector-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .sector-name { font-weight: 600; font-size: 0.94rem; }
-    .sector-price { font-weight: 700; color: #4ade80; font-size: 0.95rem; }
-    .sector-bar-wrap { height: 6px; background: #1e2636; border-radius: 999px; overflow: hidden; margin: 8px 0 6px; }
-    .sector-bar { height: 100%; background: var(--blue); border-radius: 999px; transition: width 0.25s ease; }
-    .sector-foot { display: flex; justify-content: space-between; font-size: 0.77rem; color: var(--muted); }
+    .sector-top { display: flex; justify-content: space-between; align-items: center; }
+    .sector-name { font-weight: 600; font-size: 0.88rem; }
+    .sector-price { font-weight: 700; color: #4ade80; font-size: 0.9rem; }
+    .sector-bar-wrap { height: 5px; background: #1e2636; border-radius: 999px; overflow: hidden; margin: 6px 0 5px; }
+    .sector-bar { height: 100%; background: var(--blue); border-radius: 999px; }
+    .sector-foot { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--muted); }
 
-    /* Active Reservation Highlight */
-    .reservation-box {
+    /* Step 3: Active Reservation vs Empty */
+    .res-active-card {
       background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.38);
+      border: 1px solid rgba(34, 197, 94, 0.45);
       border-radius: 12px;
-      padding: 14px;
+      padding: 13px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
-    .res-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .ttl-pill {
-      background: rgba(245, 158, 11, 0.18);
-      color: #fcd34d;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      padding: 3px 10px;
+    .res-empty-card {
+      background: #0c1017;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 20px 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+    .ttl-badge {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fde047;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      padding: 3px 9px;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
       font-family: Consolas, monospace;
     }
 
-    .row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
-    .row > * { flex: 1; min-width: 120px; }
-
-    /* Lists & Tickets */
+    /* Scrollable Lists */
     .list {
-      max-height: 240px;
+      max-height: 195px;
       overflow-y: auto;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 6px 10px;
+      border-radius: 9px;
+      padding: 5px 9px;
       background: #0b0e14;
-      font-size: 0.83rem;
+      font-size: 0.81rem;
     }
     .item {
-      padding: 8px 4px;
-      border-bottom: 1px solid #19202c;
+      padding: 6px 4px;
+      border-bottom: 1px solid #171e2b;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-    }
-    .item:last-child { border-bottom: none; }
-    .item.highlight { background: rgba(255, 90, 54, 0.1); border-radius: 6px; padding: 8px; }
-    .mono { font-family: Consolas, monospace; font-size: 0.78rem; color: #cbd5e1; }
-    .empty { color: var(--muted); padding: 14px 6px; text-align: center; font-size: 0.83rem; }
-
-    .ticket-card {
-      background: #0d1118;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--green);
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
       gap: 8px;
     }
-    .ticket-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .ticket-qr { font-family: Consolas, monospace; font-size: 0.78rem; background: var(--surface-2); padding: 2px 7px; border-radius: 5px; color: #93c5fd; }
+    .item:last-child { border-bottom: none; }
+    .item.me {
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin: 3px 0;
+      color: #dcfce7;
+    }
+    .mono { font-family: Consolas, monospace; font-size: 0.76rem; color: #cbd5e1; }
+    .empty { color: var(--muted); padding: 12px 6px; text-align: center; font-size: 0.8rem; }
 
-    /* Alerts & Fraud */
+    /* Tickets */
+    .ticket-item {
+      background: #0c1017;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green);
+      border-radius: 9px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ticket-qr { font-family: Consolas, monospace; font-size: 0.74rem; background: var(--surface-2); padding: 2px 7px; border-radius: 5px; color: #93c5fd; }
+
+    /* Fraud Alerts */
     .alert {
       background: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.42);
       color: #fecaca;
-      padding: 11px 13px;
-      border-radius: 10px;
-      font-size: 0.84rem;
+      padding: 9px 11px;
+      border-radius: 9px;
+      font-size: 0.81rem;
     }
-    .alert strong { color: #fff; }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
-
+    /* Filter Pills */
     .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
     .pill-btn {
       background: var(--surface-2);
@@ -317,7 +334,7 @@
       border: 1px solid var(--border);
       padding: 4px 10px;
       border-radius: 999px;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       cursor: pointer;
     }
     .pill-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
@@ -330,13 +347,13 @@
       background: #162032;
       border: 1px solid var(--blue);
       color: #fff;
-      padding: 11px 16px;
+      padding: 12px 16px;
       border-radius: 10px;
       font-size: 0.86rem;
       display: none;
       z-index: 99;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      max-width: 420px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     }
     .toast.error { background: #2b1215; border-color: var(--red); color: #fecaca; }
     .toast.success { background: #0d261a; border-color: var(--green); color: #dcfce7; }
@@ -344,229 +361,213 @@
 </head>
 <body>
   <div class="container">
+    <!-- Cabeçalho -->
     <header>
       <div class="brand">
-        <h1>TICKETS PULSE <span class="brand-pill">Marco 2</span></h1>
-        <div class="subtitle">Plataforma de vendas de ingressos usando 4 famílias NoSQL integradas</div>
+        <h1>TICKETS PULSE <span class="brand-pill">Marco 2 · NoSQL Poliglota</span></h1>
+        <div class="subtitle">Simulador interativo de venda de ingressos em alta demanda (Redis + MongoDB + Cassandra + Neo4j)</div>
       </div>
-      <div class="badges" id="dbBadges">Carregando status dos bancos...</div>
+      <div class="badges" id="dbBadges">Carregando bancos...</div>
     </header>
 
-    <!-- Barra de Contexto Global -->
+    <!-- ZONA 1: Contexto (Qual evento e qual usuário estamos simulando?) -->
     <section class="context-bar">
       <div>
-        <label for="eventSelect">Evento em exibição (MongoDB)</label>
-        <select id="eventSelect" onchange="onEventChange()"></select>
-        <div class="event-meta" id="eventMeta"></div>
+        <label for="eventSelect">1. Evento selecionado (Catálogo MongoDB)</label>
+        <select id="eventSelect" onchange="refreshAll()"></select>
+        <div class="meta-row" id="eventMeta"></div>
       </div>
       <div>
-        <label for="userSelect">Comprador ativo (simulando usuário logado)</label>
+        <label for="userSelect">2. Comprador que você está simulando agora</label>
         <select id="userSelect" onchange="onUserChange()">
-          <option value="usr-victor">Victor Zainote (usr-victor)</option>
-          <option value="usr-leo">Leonardo Soares (usr-leo)</option>
-          <option value="usr-ana">Ana Clara (usr-ana)</option>
-          <option value="usr-cambista-1">Conta Suspeita A (usr-cambista-1)</option>
-          <option value="usr-cambista-2">Conta Suspeita B (usr-cambista-2)</option>
+          <option value="usr-victor">👤 Victor Zainote (usr-victor) — Comprador legítimo</option>
+          <option value="usr-leo">👤 Leonardo Soares (usr-leo) — Comprador legítimo</option>
+          <option value="usr-ana">👤 Ana Clara (usr-ana) — Compradora legítima</option>
+          <option value="usr-cambista-1">🕵️ Conta Suspeita A (usr-cambista-1) — Simular Cambista</option>
+          <option value="usr-cambista-2">🕵️ Conta Suspeita B (usr-cambista-2) — Simular Cambista</option>
         </select>
-        <div class="event-meta" id="userHint"></div>
+        <div class="meta-row" id="userHint"></div>
       </div>
     </section>
 
-    <!-- Navegação por Abas -->
-    <nav class="tabs">
-      <button class="tab-btn active" data-tab="buy" onclick="switchTab('buy')">
-        1. Comprar Ingressos
-      </button>
-      <button class="tab-btn" data-tab="analytics" onclick="switchTab('analytics')">
-        2. Antifraude & Histórico <span class="tab-count" id="fraudBadge">0</span>
-      </button>
-      <button class="tab-btn" data-tab="inspector" onclick="switchTab('inspector')">
-        3. Inspector NoSQL <span class="tab-count" id="logsBadge">0</span>
-      </button>
-    </nav>
-
-    <!-- ABA 1: FLUXO DE COMPRA GUIADO -->
-    <div id="tab-buy" class="tab-panel active">
-      <div class="flow-grid">
-        <!-- Coluna Esquerda: Passos 1 e 3 -->
-        <div class="stack">
-          <!-- Passo 1: Escolher Setor -->
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title"><span class="step-num">1</span> Escolha o setor</h2>
-                <p class="helper">Clique em um setor abaixo. O catálogo vem do MongoDB e o estoque em tempo real vem do Redis.</p>
-              </div>
-              <span class="tag tag-mongo">MongoDB + Redis</span>
-            </div>
-            <div class="sectors-grid" id="sectorsList"></div>
-          </section>
-
-          <!-- Passo 3: Reserva & Checkout -->
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title"><span class="step-num">3</span> Reservar & Confirmar Compra</h2>
-                <p class="helper">A reserva trava o estoque no Redis por 10 min (TTL). Ao confirmar, grava nos 4 bancos.</p>
-              </div>
-              <span class="tag tag-redis">Redis TTL → Todos</span>
-            </div>
-
-            <!-- Formulário de nova reserva (quando usuário não tem reserva ativa) -->
-            <div id="newReservationBox">
-              <div class="row">
-                <div>
-                  <label for="sectorSelect">Setor selecionado</label>
-                  <select id="sectorSelect" onchange="syncSectorSelection()"></select>
-                </div>
-                <div style="max-width: 110px;">
-                  <label for="qtyInput">Quantidade</label>
-                  <input id="qtyInput" type="number" min="1" max="6" value="2" oninput="updatePricePreview()" />
-                </div>
-                <div style="display:flex; flex-direction:column; justify-content:end;">
-                  <div style="font-size:0.78rem; color:var(--muted);">Total estimado</div>
-                  <div id="pricePreview" style="font-size:1.05rem; font-weight:700; color:#4ade80;">R$ 0,00</div>
-                </div>
-              </div>
-              <div style="margin-top: 12px;">
-                <button onclick="createReservation()" style="width: 100%;">Reservar Ingressos (DECRBY + TTL 10 min)</button>
-              </div>
-            </div>
-
-            <!-- Banner de reserva ativa (quando usuário já reservou) -->
-            <div id="activeReservationBox" class="reservation-box" style="display:none;">
-              <div class="res-top">
-                <div>
-                  <strong style="color:#86efac;">Reserva ativa para <span id="resUserLabel"></span></strong>
-                  <div id="resDetails" style="font-size:0.86rem; margin-top:2px;"></div>
-                </div>
-                <span class="ttl-pill" id="resTtl">TTL: --s</span>
-              </div>
-
-              <div class="row">
-                <div>
-                  <label for="deviceInput">Dispositivo (rastreado pelo Neo4j)</label>
-                  <input id="deviceInput" value="dev-notebook-victor" />
-                </div>
-                <div>
-                  <label for="cardInput">Cartão Hash (rastreado pelo Neo4j)</label>
-                  <input id="cardInput" value="card-hash-5555" />
-                </div>
-              </div>
-
-              <div class="row">
-                <button class="success" onclick="doCheckout()">Confirmar Compra (Checkout)</button>
-                <button class="danger" onclick="expireActiveReservation()">Simular Expiração do TTL</button>
-              </div>
-            </div>
-
-            <!-- Outras reservas ativas no sistema -->
-            <div id="otherReservationsWrap" style="display:none;">
-              <label>Outras reservas ativas no momento (Redis)</label>
-              <div class="list" id="reservationsList"></div>
-            </div>
-          </section>
-        </div>
-
-        <!-- Coluna Direita: Passos 2 e 4 -->
-        <div class="stack">
-          <!-- Passo 2: Fila Virtual -->
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title"><span class="step-num">2</span> Fila Virtual (Opcional)</h2>
-                <p class="helper">Ordenada por timestamp de chegada no Redis (<code>Sorted Set</code>). Simule um pico para testar.</p>
-              </div>
-              <span class="tag tag-redis">Redis ZSET</span>
-            </div>
-            <div id="queueStatusBanner" class="meta-chip" style="padding:8px 10px;">Verificando posição na fila...</div>
-            <div class="row">
-              <button onclick="enterQueue()">Entrar na Fila</button>
-              <button class="secondary" onclick="burstQueue()">Simular Pico (+15 fãs)</button>
-            </div>
-            <div class="list" id="queueList"></div>
-          </section>
-
-          <!-- Passo 4: Ingressos Emitidos -->
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title"><span class="step-num">4</span> Ingressos Emitidos & Transferência</h2>
-                <p class="helper">Documentos salvos no MongoDB. Transferências atualizam também o grafo no Neo4j.</p>
-              </div>
-              <span class="tag tag-mongo">MongoDB + Neo4j</span>
-            </div>
-            <div id="ticketsContainer" style="display:flex; flex-direction:column; gap:10px; max-height: 360px; overflow-y:auto;"></div>
-          </section>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 2: ANTIFRAUDE & HISTÓRICO -->
-    <div id="tab-analytics" class="tab-panel">
-      <div class="stack">
-        <!-- Neo4j Antifraude -->
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="step-title">Detecção de Cambismo & Grafo de Relações</h2>
-              <p class="helper">O Neo4j cruza contas, dispositivos e cartões para identificar anéis de fraude (ex: múltiplas contas no mesmo device).</p>
-            </div>
-            <span class="tag tag-neo4j">Neo4j Grafos</span>
-          </div>
-          <div id="fraudAlerts" class="stack" style="gap:8px;"></div>
-          <div>
-            <label>Arestas recentes no Grafo</label>
-            <div class="list mono" id="graphSummary"></div>
-          </div>
-        </section>
-
-        <!-- Cassandra Histórico + Auditoria -->
-        <div class="two-col">
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title">Histórico de Compras</h2>
-                <p class="helper">Tabela <code>compras_por_evento</code> (Partition Key: <code>evento_id</code>).</p>
-              </div>
-              <span class="tag tag-cassandra">Cassandra</span>
-            </div>
-            <div class="list" id="historyList" style="max-height: 300px;"></div>
-          </section>
-
-          <section class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="step-title">Trilha de Auditoria</h2>
-                <p class="helper">Tabela <code>auditoria_eventos</code> ordenada do mais recente para o mais antigo.</p>
-              </div>
-              <span class="tag tag-cassandra">Cassandra</span>
-            </div>
-            <div class="list" id="auditList" style="max-height: 300px;"></div>
-          </section>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 3: INSPECTOR NOSQL -->
-    <div id="tab-inspector" class="tab-panel">
+    <!-- ZONA 2: Fluxo de Compra em 3 Passos -->
+    <div class="zone-title">Jornada de Compra (Siga os Passos 1 → 2 → 3)</div>
+    <div class="steps-grid">
+      <!-- PASSO 1: FILA VIRTUAL -->
       <section class="card">
         <div class="card-header">
           <div>
-            <h2 class="step-title">Inspector de Comandos NoSQL em Tempo Real</h2>
-            <p class="helper">Cada ação na interface dispara comandos reais (ou equivalentes em memória) nos 4 bancos.</p>
+            <h2 class="card-title"><span class="step-badge">Passo 1</span> Fila Virtual</h2>
+            <p class="helper">Ordena chegadas por timestamp no Redis (<code>ZADD</code> / <code>ZRANK</code>).</p>
           </div>
-          <div class="filter-pills" id="logFilters">
-            <button class="pill-btn active" onclick="setLogFilter('ALL', this)">Todos</button>
-            <button class="pill-btn" onclick="setLogFilter('REDIS', this)">Redis</button>
-            <button class="pill-btn" onclick="setLogFilter('MONGO', this)">MongoDB</button>
-            <button class="pill-btn" onclick="setLogFilter('CASSANDRA', this)">Cassandra</button>
-            <button class="pill-btn" onclick="setLogFilter('NEO4J', this)">Neo4j</button>
-          </div>
+          <span class="tag tag-redis">Redis ZSET</span>
         </div>
-        <div class="list mono" id="logsList" style="max-height: 460px;"></div>
+
+        <div id="queueStatusBanner" class="status-box not-in-queue">Verificando fila...</div>
+
+        <div class="row">
+          <button onclick="enterQueue()">Entrar na Fila</button>
+          <button class="secondary" onclick="burstQueue()">Simular Pico (+15 fãs)</button>
+        </div>
+
+        <div>
+          <label id="queueListLabel">Ordem atual da fila</label>
+          <div class="list" id="queueList"></div>
+        </div>
+      </section>
+
+      <!-- PASSO 2: ESCOLHER SETOR & RESERVAR -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><span class="step-badge">Passo 2</span> Escolher Setor & Reservar</h2>
+            <p class="helper">Clique em um setor e reserve. O Redis desconta o estoque atomicamente (<code>DECRBY</code>).</p>
+          </div>
+          <span class="tag tag-mongo">Mongo + Redis</span>
+        </div>
+
+        <div class="sectors-list" id="sectorsList"></div>
+
+        <!-- Seletor oculto sincronizado para manter compatibilidade -->
+        <select id="sectorSelect" style="display:none;" onchange="updatePricePreview()"></select>
+
+        <div class="row" style="margin-top: auto; padding-top: 6px;">
+          <div style="max-width: 95px;">
+            <label for="qtyInput">Qtd (1–6)</label>
+            <input id="qtyInput" type="number" min="1" max="6" value="2" oninput="updatePricePreview()" />
+          </div>
+          <div>
+            <label>Valor Total</label>
+            <div id="pricePreview" style="font-size: 1.05rem; font-weight: 700; color: #4ade80; padding: 6px 0;">R$ 0,00</div>
+          </div>
+          <button onclick="createReservation()" style="flex: 1.4;">Reservar (TTL 10m)</button>
+        </div>
+      </section>
+
+      <!-- PASSO 3: CHECKOUT OU EXPIRAÇÃO -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><span class="step-badge">Passo 3</span> Pagamento (Checkout)</h2>
+            <p class="helper">Confirme a compra para gravar no Cassandra, MongoDB e Neo4j, ou simule o fim do TTL.</p>
+          </div>
+          <span class="tag tag-redis">Poliglota (4 BDs)</span>
+        </div>
+
+        <!-- Quando o usuário NÃO tem reserva ativa -->
+        <div id="noReservationBox" class="res-empty-card">
+          Nenhuma reserva ativa para <strong id="emptyResUser">usr-victor</strong>.<br>
+          <span style="font-size:0.78rem;">Escolha um setor no <strong>Passo 2</strong> e clique em <strong>Reservar</strong>.</span>
+        </div>
+
+        <!-- Quando o usuário TEM reserva ativa -->
+        <div id="activeReservationBox" class="res-active-card" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+            <strong style="color:#86efac; font-size:0.9rem;">✅ Reserva Ativa (<span id="resUserLabel"></span>)</strong>
+            <span class="ttl-badge" id="resTtlBadge">⏱ TTL: 600s</span>
+          </div>
+          <div id="resDetails" style="font-size:0.84rem; color:var(--text);"></div>
+
+          <div class="row">
+            <div>
+              <label for="deviceInput">Dispositivo (Neo4j)</label>
+              <input id="deviceInput" value="dev-notebook-victor" />
+            </div>
+            <div>
+              <label for="cardInput">Cartão Hash (Neo4j)</label>
+              <input id="cardInput" value="card-hash-5555" />
+            </div>
+          </div>
+
+          <button class="success" onclick="doCheckout()" style="width:100%; padding:11px;">
+            ✅ Confirmar Compra (Checkout Poliglota)
+          </button>
+          <button class="danger sm" onclick="expireActiveReservation()" style="width:100%;">
+            ⏳ Simular Expiração do TTL (Estornar ao Redis)
+          </button>
+        </div>
+
+        <!-- Outras reservas ativas (de outros usuários) -->
+        <div id="otherReservationsWrap" style="display:none;">
+          <label>Reservas ativas de outros usuários</label>
+          <div class="list" id="reservationsList" style="max-height: 110px;"></div>
+        </div>
       </section>
     </div>
+
+    <!-- ZONA 3: Visão em Tempo Real dos 4 Bancos NoSQL -->
+    <div class="zone-title">Estado dos Bancos NoSQL em Tempo Real</div>
+    <div class="results-grid">
+      <!-- 1. MongoDB: Ingressos Emitidos e Transferência -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🎟️ Ingressos Emitidos & Transferência</h2>
+            <p class="helper">Documentos no <strong>MongoDB</strong>. Transferir atualiza o titular e cria aresta <code>TRANSFERIU_PARA</code> no <strong>Neo4j</strong>.</p>
+          </div>
+          <span class="tag tag-mongo">MongoDB + Neo4j</span>
+        </div>
+        <div id="ticketsContainer" style="display:flex; flex-direction:column; gap:8px; max-height: 250px; overflow-y:auto;"></div>
+      </section>
+
+      <!-- 2. Neo4j: Antifraude e Grafo -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🕵️ Antifraude & Grafo de Relacionamentos</h2>
+            <p class="helper">O <strong>Neo4j</strong> detecta contas diferentes compartilhando o mesmo dispositivo ou cartão.</p>
+          </div>
+          <span class="tag tag-neo4j">Neo4j Grafos</span>
+        </div>
+        <div id="fraudAlerts" style="display:flex; flex-direction:column; gap:6px;"></div>
+        <div>
+          <label id="graphStatsLabel">Conexões no Grafo</label>
+          <div class="list mono" id="graphSummary" style="max-height: 130px;"></div>
+        </div>
+      </section>
+
+      <!-- 3. Cassandra: Histórico de Compras -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">📜 Histórico de Compras do Evento</h2>
+            <p class="helper">Tabela <code>compras_por_evento</code> no <strong>Cassandra</strong> (Partition Key: <code>evento_id</code>, ordenado por data DESC).</p>
+          </div>
+          <span class="tag tag-cassandra">Cassandra Wide-Column</span>
+        </div>
+        <div class="list" id="historyList" style="max-height: 210px;"></div>
+      </section>
+
+      <!-- 4. Cassandra: Trilha de Auditoria -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🛡️ Trilha de Auditoria de Operações</h2>
+            <p class="helper">Tabela <code>auditoria_eventos</code> no <strong>Cassandra</strong> registrando reservas, expirações, compras e transferências.</p>
+          </div>
+          <span class="tag tag-cassandra">Cassandra Wide-Column</span>
+        </div>
+        <div class="list" id="auditList" style="max-height: 210px;"></div>
+      </section>
+    </div>
+
+    <!-- 5. Inspector de Comandos NoSQL -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">💻 Inspector de Comandos NoSQL Executados</h2>
+          <p class="helper">Veja os comandos nativos (Redis, MongoDB, CQL e Cypher) disparados a cada clique acima.</p>
+        </div>
+        <div class="filter-pills" id="logFilters">
+          <button class="pill-btn active" onclick="setLogFilter('ALL', this)">Todos</button>
+          <button class="pill-btn" onclick="setLogFilter('REDIS', this)">Redis</button>
+          <button class="pill-btn" onclick="setLogFilter('MONGO', this)">MongoDB</button>
+          <button class="pill-btn" onclick="setLogFilter('CASSANDRA', this)">Cassandra</button>
+          <button class="pill-btn" onclick="setLogFilter('NEO4J', this)">Neo4j</button>
+        </div>
+      </div>
+      <div class="list mono" id="logsList" style="max-height: 220px;"></div>
+    </section>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -576,21 +577,48 @@
     let logsCache = [];
     let currentLogFilter = 'ALL';
     let toastTimer = null;
-    let activeUserReservation = null;
+    let activeTtlSeconds = null;
 
-    const USER_DEFAULTS = {
-      'usr-victor': { device: 'dev-notebook-victor', card: 'card-hash-5555', hint: 'Comprador comum — dispositivo e cartão próprios.' },
-      'usr-leo': { device: 'dev-iphone-leo', card: 'card-hash-1010', hint: 'Comprador comum — já possui compra inicial no seed.' },
-      'usr-ana': { device: 'dev-android-ana', card: 'card-hash-2020', hint: 'Compradora comum — ideal para testar transferência de ingresso.' },
-      'usr-cambista-1': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: 'Perfil suspeito — compartilha dispositivo/cartão com Conta Suspeita B.' },
-      'usr-cambista-2': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: 'Perfil suspeito — compartilha dispositivo/cartão com Conta Suspeita A.' },
+    const USER_NAMES = {
+      'usr-victor': 'Victor Zainote',
+      'usr-leo': 'Leonardo Soares',
+      'usr-ana': 'Ana Clara',
+      'usr-cambista-1': 'Conta Suspeita A',
+      'usr-cambista-2': 'Conta Suspeita B',
     };
 
-    const TRANSFER_USERS = [
+    const USER_DEFAULTS = {
+      'usr-victor': { device: 'dev-notebook-victor', card: 'card-hash-5555', hint: 'Dispositivo próprio (dev-notebook-victor) e cartão próprio (card-hash-5555).' },
+      'usr-leo': { device: 'dev-iphone-leo', card: 'card-hash-1010', hint: 'Dispositivo próprio (dev-iphone-leo) e cartão próprio (card-hash-1010).' },
+      'usr-ana': { device: 'dev-android-ana', card: 'card-hash-2020', hint: 'Dispositivo próprio (dev-android-ana) e cartão próprio (card-hash-2020).' },
+      'usr-cambista-1': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Usa o mesmo device (dev-bot-farm-99) e cartão (card-hash-9999) da Conta Suspeita B!' },
+      'usr-cambista-2': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Usa o mesmo device (dev-bot-farm-99) e cartão (card-hash-9999) da Conta Suspeita A!' },
+    };
+
+    const TRANSFER_TARGETS = [
       { id: 'usr-ana', label: 'Ana Clara (usr-ana)' },
       { id: 'usr-leo', label: 'Leonardo Soares (usr-leo)' },
       { id: 'usr-victor', label: 'Victor Zainote (usr-victor)' },
+      { id: 'usr-cambista-1', label: 'Conta Suspeita A (usr-cambista-1)' },
     ];
+
+    // Cronômetro regressivo visual de 1 segundo para o TTL da reserva ativa
+    setInterval(() => {
+      if (activeTtlSeconds !== null && activeTtlSeconds > 0) {
+        activeTtlSeconds -= 1;
+        const badge = document.getElementById('resTtlBadge');
+        if (badge) badge.textContent = `⏱ Expira em ${activeTtlSeconds}s`;
+      }
+    }, 1000);
+
+    function formatMemberName(member) {
+      const cleanId = String(member).replace(/^usuario:/, '');
+      return USER_NAMES[cleanId] ? `${USER_NAMES[cleanId]} (${cleanId})` : cleanId;
+    }
+
+    function isMemberUser(member, userId) {
+      return member === userId || member === `usuario:${userId}`;
+    }
 
     function showToast(msg, type = 'info') {
       const el = document.getElementById('toast');
@@ -598,12 +626,7 @@
       el.className = `toast ${type === 'error' ? 'error' : type === 'success' ? 'success' : ''}`;
       el.style.display = 'block';
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3600);
-    }
-
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tabName}`));
+      toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3800);
     }
 
     function setLogFilter(filter, btn) {
@@ -629,7 +652,7 @@
       const container = document.getElementById('dbBadges');
       container.innerHTML = Object.entries(data.databases)
         .map(([name, info]) => {
-          const modeLabel = info.mode === 'memory' ? 'em memória' : 'Docker live';
+          const modeLabel = info.mode === 'memory' ? 'Em Memória' : 'Docker Live';
           return `<span class="badge"><span class="dot ${info.mode}"></span><strong>${name.toUpperCase()}</strong> (${info.family}) · ${modeLabel}</span>`;
         })
         .join('');
@@ -644,19 +667,10 @@
       refreshAll();
     }
 
-    function onEventChange() {
-      refreshAll();
-    }
-
     function selectSector(codigo) {
       document.getElementById('sectorSelect').value = codigo;
-      syncSectorSelection();
-    }
-
-    function syncSectorSelection() {
-      const selectedSector = document.getElementById('sectorSelect').value;
       document.querySelectorAll('.sector-card').forEach(card => {
-        card.classList.toggle('selected', card.dataset.codigo === selectedSector);
+        card.classList.toggle('selected', card.dataset.codigo === codigo);
       });
       updatePricePreview();
     }
@@ -685,13 +699,13 @@
       const metaTags = [];
       if (selected.local) metaTags.push(`<span>📍 ${selected.local}</span>`);
       if (dateStr) metaTags.push(`<span>📅 ${dateStr}</span>`);
-      if (selected.categoria) metaTags.push(`<span class="meta-chip">${selected.categoria}</span>`);
-      if (selected.metadados?.lote_atual) metaTags.push(`<span class="meta-chip">${selected.metadados.lote_atual}</span>`);
+      if (selected.categoria) metaTags.push(`<span class="chip">${selected.categoria}</span>`);
+      if (selected.metadados?.lote_atual) metaTags.push(`<span class="chip">${selected.metadados.lote_atual}</span>`);
       document.getElementById('eventMeta').innerHTML = metaTags.join('');
 
       const sectorSel = document.getElementById('sectorSelect');
       const curSec = sectorSel.value;
-      sectorSel.innerHTML = selected.setores.map(s => `<option value="${s.codigo}">${s.nome} — R$ ${s.preco.toFixed(2)}</option>`).join('');
+      sectorSel.innerHTML = selected.setores.map(s => `<option value="${s.codigo}">${s.nome}</option>`).join('');
       if (curSec && selected.setores.some(s => s.codigo === curSec)) sectorSel.value = curSec;
 
       const activeSec = sectorSel.value;
@@ -701,13 +715,13 @@
         return `
           <div class="sector-card ${isSel ? 'selected' : ''}" data-codigo="${s.codigo}" onclick="selectSector('${s.codigo}')">
             <div class="sector-top">
-              <span class="sector-name">${s.nome}</span>
+              <span class="sector-name">${isSel ? '🔘 ' : '⚪ '}${s.nome}</span>
               <span class="sector-price">R$ ${s.preco.toFixed(2).replace('.', ',')}</span>
             </div>
             <div class="sector-bar-wrap"><div class="sector-bar" style="width:${pct}%"></div></div>
             <div class="sector-foot">
-              <span>Disponível no Redis: <strong>${s.disponivel.toLocaleString('pt-BR')}</strong> / ${s.capacidade.toLocaleString('pt-BR')}</span>
-              <span>${isSel ? '✓ Selecionado' : 'Clique para selecionar'}</span>
+              <span>Estoque Redis: <strong>${s.disponivel.toLocaleString('pt-BR')}</strong> / ${s.capacidade.toLocaleString('pt-BR')}</span>
+              <span>${isSel ? 'Setor selecionado' : 'Clique para escolher'}</span>
             </div>
           </div>
         `;
@@ -730,6 +744,7 @@
       await loadEvents();
       const eventoId = document.getElementById('eventSelect').value;
       const activeUser = document.getElementById('userSelect').value;
+      const activeUserName = USER_NAMES[activeUser] || activeUser;
       if (!eventoId) return;
 
       const [queue, reservations, history, graph, tickets, logs] = await Promise.all([
@@ -741,93 +756,124 @@
         api('/api/logs'),
       ]);
 
-      // Fila Virtual
-      const myQueueEntry = queue.find(q => q.member === activeUser);
+      // 1. FILA VIRTUAL (Corrigido: compara usuario:usr-victor e destaca usuario mesmo se estiver na posicao #120)
+      const myQueueEntry = queue.find(q => isMemberUser(q.member, activeUser));
       const banner = document.getElementById('queueStatusBanner');
+      document.getElementById('queueListLabel').textContent = `Pessoas na fila agora (${queue.length})`;
+
       if (myQueueEntry) {
-        banner.innerHTML = `✅ <strong>${activeUser}</strong> está na fila na posição <strong>#${myQueueEntry.position}</strong> (de ${queue.length})`;
+        banner.className = 'status-box in-queue';
+        banner.innerHTML = `✅ <strong>${activeUserName}</strong> está na fila! Sua posição atual: <strong>#${myQueueEntry.position}</strong> de ${queue.length}`;
       } else {
-        banner.innerHTML = `ℹ️ <strong>${activeUser}</strong> ainda não entrou na fila (${queue.length} pessoa(s) aguardando)`;
+        banner.className = 'status-box not-in-queue';
+        banner.innerHTML = `ℹ️ <strong>${activeUserName}</strong> não está na fila (${queue.length} aguardando). Clique em <strong>Entrar na Fila</strong>.`;
       }
 
-      document.getElementById('queueList').innerHTML = queue.length
-        ? queue.slice(0, 20).map(q => {
-            const isMe = q.member === activeUser;
-            return `<div class="item ${isMe ? 'highlight' : ''}"><span><strong>#${q.position}</strong> · ${q.member} ${isMe ? '(você)' : ''}</span><span class="mono">score: ${q.score}</span></div>`;
-          }).join('')
-        : '<div class="empty">Fila vazia. Clique em "Entrar na Fila" ou "Simular Pico".</div>';
+      if (!queue.length) {
+        document.getElementById('queueList').innerHTML = '<div class="empty">Fila vazia. Clique em "Entrar na Fila" ou "Simular Pico".</div>';
+      } else {
+        const topSlice = queue.slice(0, 15);
+        const myInTop = topSlice.some(q => isMemberUser(q.member, activeUser));
+        let html = '';
 
-      // Reservas
+        // Se o usuário estiver na posição > 15 (ex: #122), fixa ele no topo da lista para ficar visível!
+        if (myQueueEntry && !myInTop) {
+          html += `<div class="item me"><span>👉 <strong>#${myQueueEntry.position} · ${formatMemberName(myQueueEntry.member)} — VOCÊ</strong></span><span class="mono">chegada: ${new Date(myQueueEntry.score).toLocaleTimeString('pt-BR')}</span></div>`;
+        }
+
+        html += topSlice.map(q => {
+          const isMe = isMemberUser(q.member, activeUser);
+          return `<div class="item ${isMe ? 'me' : ''}"><span><strong>#${q.position}</strong> · ${formatMemberName(q.member)}${isMe ? ' — <strong>VOCÊ</strong>' : ''}</span><span class="mono">${new Date(q.score).toLocaleTimeString('pt-BR')}</span></div>`;
+        }).join('');
+
+        if (queue.length > 15) {
+          html += `<div class="empty" style="padding:6px;">... e mais ${queue.length - 15} pessoa(s) na fila</div>`;
+        }
+        document.getElementById('queueList').innerHTML = html;
+      }
+
+      // 2. RESERVA & CHECKOUT
+      document.getElementById('emptyResUser').textContent = `${activeUserName} (${activeUser})`;
       const myRes = reservations.find(r => r.key === `reserva:${activeUser}`);
-      activeUserReservation = myRes || null;
 
-      document.getElementById('newReservationBox').style.display = myRes ? 'none' : 'block';
+      document.getElementById('noReservationBox').style.display = myRes ? 'none' : 'block';
       document.getElementById('activeReservationBox').style.display = myRes ? 'flex' : 'none';
 
       if (myRes) {
-        document.getElementById('resUserLabel').textContent = activeUser;
-        document.getElementById('resDetails').textContent = `${myRes.qtd}x setor "${myRes.setor}" · evento ${myRes.eventoId}`;
-        document.getElementById('resTtl').textContent = `TTL restante: ${myRes.ttl}s`;
+        activeTtlSeconds = myRes.ttl;
+        document.getElementById('resUserLabel').textContent = activeUserName;
+        document.getElementById('resDetails').innerHTML = `Setor: <strong>${myRes.setor}</strong> · Quantidade: <strong>${myRes.qtd} ingresso(s)</strong>`;
+        document.getElementById('resTtlBadge').textContent = `⏱ Expira em ${myRes.ttl}s`;
+      } else {
+        activeTtlSeconds = null;
       }
 
       const otherRes = reservations.filter(r => r.key !== `reserva:${activeUser}`);
       document.getElementById('otherReservationsWrap').style.display = otherRes.length ? 'block' : 'none';
       document.getElementById('reservationsList').innerHTML = otherRes.map(r => {
         const uid = r.key.replace('reserva:', '');
-        return `<div class="item"><span><strong>${uid}</strong> (${r.qtd}x ${r.setor})</span><span>TTL: ${r.ttl}s <button class="danger sm" style="margin-left:6px;" onclick="expireRes('${uid}')">Expirar</button></span></div>`;
+        return `<div class="item"><span><strong>${USER_NAMES[uid] || uid}</strong> (${r.qtd}x ${r.setor})</span><span>TTL: ${r.ttl}s <button class="danger sm" style="margin-left:6px;" onclick="expireRes('${uid}')">Expirar</button></span></div>`;
       }).join('');
 
-      // Ingressos Emitidos (MongoDB)
+      // 3. INGRESSOS EMITIDOS (MongoDB)
       const ticketsContainer = document.getElementById('ticketsContainer');
       ticketsContainer.innerHTML = tickets.length
         ? tickets.map(t => {
-            const options = TRANSFER_USERS
+            const options = TRANSFER_TARGETS
               .filter(u => u.id !== t.titular_id)
               .map(u => `<option value="${u.id}">${u.label}</option>`)
               .join('');
+            const ownerLabel = USER_NAMES[t.titular_id] ? `${USER_NAMES[t.titular_id]} (${t.titular_id})` : t.titular_id;
+            const transfersCount = (t.historico_transferencias || []).length;
             return `
-              <div class="ticket-card">
-                <div class="ticket-head">
-                  <strong>${t._id} · ${t.setor}</strong>
-                  <span class="ticket-qr">${t.qr_code}</span>
+              <div class="ticket-item">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <strong>🎟️ ${t._id} · Setor: ${t.setor}</strong>
+                  <span class="ticket-qr">QR: ${t.qr_code}</span>
                 </div>
-                <div style="font-size:0.82rem; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-                  <span>Titular: <strong style="color:var(--text);">${t.titular_id}</strong></span>
-                  <span>Valor: R$ ${Number(t.valor || 0).toFixed(2).replace('.', ',')}</span>
+                <div style="font-size:0.8rem; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap;">
+                  <span>Titular atual: <strong style="color:var(--text);">${ownerLabel}</strong></span>
+                  <span>R$ ${Number(t.valor || 0).toFixed(2).replace('.', ',')} ${transfersCount ? `· (${transfersCount} transf.)` : ''}</span>
                 </div>
-                <div class="row" style="margin-top:4px;">
-                  <select id="transfer-to-${t._id}" style="padding:6px 8px; font-size:0.8rem;">${options}</select>
-                  <button class="secondary sm" style="flex:0 0 auto;" onclick="transferTicket('${t._id}', '${t.titular_id}')">Transferir</button>
+                <div class="row" style="margin-top:2px;">
+                  <select id="transfer-to-${t._id}" style="padding:5px 8px; font-size:0.79rem;">${options}</select>
+                  <button class="secondary sm" style="flex:0 0 auto;" onclick="transferTicket('${t._id}', '${t.titular_id}')">Transferir Titularidade</button>
                 </div>
               </div>
             `;
           }).join('')
-        : '<div class="empty">Nenhum ingresso emitido para este evento ainda. Faça uma reserva e confirme o checkout!</div>';
+        : '<div class="empty">Nenhum ingresso emitido ainda. Reserve no Passo 2 e confirme no Passo 3!</div>';
 
-      // Aba 2: Antifraude (Neo4j) + Histórico (Cassandra)
-      const fraudBadge = document.getElementById('fraudBadge');
-      fraudBadge.textContent = graph.alerts.length;
-      fraudBadge.className = `tab-count ${graph.alerts.length ? 'warn' : ''}`;
-
+      // 4. ANTIFRAUDE & GRAFO (Neo4j)
       document.getElementById('fraudAlerts').innerHTML = graph.alerts.length
-        ? graph.alerts.map(a => `<div class="alert">⚠ <strong>${a.tipo} (${a.risco}):</strong> recurso <code>${a.recurso}</code> compartilhado entre as contas <strong>${a.usuarios.join(' e ')}</strong></div>`).join('')
+        ? graph.alerts.map(a => `<div class="alert">🚨 <strong>${a.tipo}:</strong> <code>${a.recurso}</code> usado pelas contas <strong>[${a.usuarios.join(', ')}]</strong> — ${a.risco}</div>`).join('')
         : '<div class="empty">Nenhuma anomalia detectada no grafo para este evento.</div>';
 
-      document.getElementById('graphSummary').innerHTML =
-        `<div class="item"><span>Nós: <strong>${graph.snapshot.nodes.length}</strong> | Arestas: <strong>${graph.snapshot.edges.length}</strong></span></div>` +
-        (graph.snapshot.edges.slice(-10).map(e => `<div class="item"><span>${e.from} —[<strong>${e.label}</strong>]→ ${e.to}</span></div>`).join('') || '<div class="empty">Sem arestas registradas.</div>');
+      document.getElementById('graphStatsLabel').textContent = `Conexões no Grafo (${graph.snapshot.nodes.length} nós · ${graph.snapshot.edges.length} arestas)`;
+      document.getElementById('graphSummary').innerHTML = graph.snapshot.edges.length
+        ? graph.snapshot.edges.slice().reverse().map(e => `<div class="item"><span>${e.from} ──[<strong>${e.label}</strong>]──▶ ${e.to}</span></div>`).join('')
+        : '<div class="empty">Sem conexões registradas.</div>';
 
+      // 5. HISTÓRICO & AUDITORIA (Cassandra - campos corrigidos: tipo, detalhe, ocorrido_em)
       document.getElementById('historyList').innerHTML = history.purchases.length
-        ? history.purchases.map(p => `<div class="item"><span><strong>${p.usuario_id}</strong> · ${p.quantidade}x ${p.setor}</span><span class="mono">R$ ${Number(p.valor_total).toFixed(2)} · ${new Date(p.comprado_em).toLocaleTimeString('pt-BR')}</span></div>`).join('')
-        : '<div class="empty">Sem compras confirmadas neste evento.</div>';
+        ? history.purchases.map(p => {
+            const uName = USER_NAMES[p.usuario_id] || p.usuario_id;
+            return `<div class="item"><span><strong>${uName}</strong> · ${p.quantidade}x ${p.setor}</span><span class="mono">R$ ${Number(p.valor_total).toFixed(2)} · ${new Date(p.comprado_em).toLocaleTimeString('pt-BR')}</span></div>`;
+          }).join('')
+        : '<div class="empty">Sem compras registradas neste evento.</div>';
 
       document.getElementById('auditList').innerHTML = history.audit.length
-        ? history.audit.map(a => `<div class="item"><span><strong>[${a.acao}]</strong> ${a.detalhes}</span><span class="mono">${new Date(a.registrado_em).toLocaleTimeString('pt-BR')}</span></div>`).join('')
-        : '<div class="empty">Sem eventos de auditoria.</div>';
+        ? history.audit.map(a => {
+            const tipo = a.tipo || a.acao || 'LOG';
+            const det = a.detalhe || a.detalhes || '';
+            const ts = a.ocorrido_em || a.registrado_em;
+            const timeStr = ts ? new Date(ts).toLocaleTimeString('pt-BR') : '';
+            return `<div class="item"><span><strong>[${tipo}]</strong> ${det}</span><span class="mono">${timeStr}</span></div>`;
+          }).join('')
+        : '<div class="empty">Sem registros de auditoria.</div>';
 
-      // Aba 3: Inspector
+      // 6. INSPECTOR NOSQL
       logsCache = logs;
-      document.getElementById('logsBadge').textContent = logs.length;
       renderLogs();
     }
 
@@ -837,7 +883,7 @@
           eventoId: document.getElementById('eventSelect').value,
           usuarioId: document.getElementById('userSelect').value,
         });
-        showToast(`Você entrou na fila na posição #${res.position}`, 'success');
+        showToast(`Você entrou na fila na posição #${res.position}!`, 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
@@ -848,20 +894,21 @@
           eventoId: document.getElementById('eventSelect').value,
           count: 15,
         });
-        showToast(`Pico simulado! ${res.totalInQueue} pessoas na fila agora.`, 'success');
+        showToast(`Pico simulado! +15 fãs adicionados (${res.totalInQueue} na fila).`, 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
 
     async function createReservation() {
       try {
+        const userId = document.getElementById('userSelect').value;
         await api('/api/reservations', 'POST', {
           eventoId: document.getElementById('eventSelect').value,
-          usuarioId: document.getElementById('userSelect').value,
+          usuarioId: userId,
           setor: document.getElementById('sectorSelect').value,
           qtd: Number(document.getElementById('qtyInput').value),
         });
-        showToast('Reserva criada no Redis com TTL de 10 min! Agora confirme o checkout.', 'success');
+        showToast('Ingressos reservados no Redis (TTL 10 min)! Agora confirme no Passo 3.', 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
@@ -874,7 +921,7 @@
     async function expireRes(userId) {
       try {
         const res = await api(`/api/reservations/${userId}/expire`, 'POST');
-        showToast(`TTL expirado! ${res.devolvido} ingresso(s) devolvido(s) ao estoque do Redis.`, 'success');
+        showToast(`TTL expirado! ${res.devolvido} ingresso(s) devolvido(s) ao estoque do Redis (INCRBY).`, 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
@@ -886,7 +933,7 @@
           deviceId: document.getElementById('deviceInput').value,
           cardHash: document.getElementById('cardInput').value,
         });
-        showToast(`Compra confirmada! ${res.tickets.length} ingresso(s) emitido(s).`, 'success');
+        showToast(`Compra confirmada! ${res.tickets.length} ingresso(s) emitido(s) no MongoDB, Cassandra e Neo4j.`, 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
@@ -901,7 +948,7 @@
           fromUserId,
           toUserId,
         });
-        showToast(`Ingresso ${ticketId} transferido para ${toUserId}!`, 'success');
+        showToast(`Ingresso ${ticketId} transferido de ${fromUserId} para ${toUserId}!`, 'success');
         refreshAll();
       } catch (e) { showToast(e.message, 'error'); }
     }
