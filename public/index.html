@@ -1,598 +1,689 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tickets Pulse — Marco 2 (Arquitetura Poliglota NoSQL)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tickets Pulse — Distributed Queue &amp; NoSQL Evaluation Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    /** @type {import('tailwindcss').Config} */
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'accent-cyan': '#38BDF8',
+            'accent-teal': '#2EC4B6',
+            'accent-orange': '#F97316',
+            'accent-purple': '#C084FC',
+            'light-primary': '#00668A',
+            'light-on-primary': '#FFFFFF',
+            'light-primary-container': '#38BDF8',
+            'light-on-primary-container': '#004965',
+            'light-secondary': '#006A62',
+            'light-on-secondary': '#FFFFFF',
+            'light-secondary-container': '#70F8E8',
+            'light-on-secondary-container': '#007168',
+            'light-tertiary': '#9D4300',
+            'light-on-tertiary': '#FFFFFF',
+            'light-tertiary-container': '#FF975D',
+            'light-on-tertiary-container': '#743000',
+            'light-error': '#BA1A1A',
+            'light-on-error': '#FFFFFF',
+            'light-error-container': '#FFDAD6',
+            'light-on-error-container': '#93000A',
+            'light-background': '#F9F9FF',
+            'light-on-background': '#1A1B21',
+            'light-surface': '#F9F9FF',
+            'light-surface-dim': '#D9D9E0',
+            'light-surface-bright': '#F9F9FF',
+            'light-surface-container-lowest': '#FFFFFF',
+            'light-surface-container-low': '#F3F3FA',
+            'light-surface-container': '#EDEDF4',
+            'light-surface-container-high': '#E8E7EF',
+            'light-surface-container-highest': '#E2E2E9',
+            'light-on-surface': '#1A1B21',
+            'light-surface-variant': '#D9E4ED',
+            'light-on-surface-variant': '#3E484F',
+            'light-outline': '#6E7980',
+            'light-outline-variant': '#BDC8D1',
+            'dark-primary': '#8ED5FF',
+            'dark-on-primary': '#00354A',
+            'dark-primary-container': '#38BDF8',
+            'dark-on-primary-container': '#004965',
+            'dark-secondary': '#4FDBCC',
+            'dark-on-secondary': '#003732',
+            'dark-secondary-container': '#00B1A3',
+            'dark-on-secondary-container': '#003D37',
+            'dark-tertiary': '#FFBF9E',
+            'dark-on-tertiary': '#552100',
+            'dark-tertiary-container': '#FF975D',
+            'dark-on-tertiary-container': '#743000',
+            'dark-error': '#FFB4AB',
+            'dark-on-error': '#690005',
+            'dark-error-container': '#93000A',
+            'dark-on-error-container': '#FFDAD6',
+            'dark-background': '#111318',
+            'dark-on-background': '#E2E2E9',
+            'dark-surface': '#111318',
+            'dark-surface-dim': '#111318',
+            'dark-surface-bright': '#37393F',
+            'dark-surface-container-lowest': '#0C0E13',
+            'dark-surface-container-low': '#1A1B21',
+            'dark-surface-container': '#1E2025',
+            'dark-surface-container-high': '#282A2F',
+            'dark-surface-container-highest': '#33353A',
+            'dark-on-surface': '#E2E2E9',
+            'dark-surface-variant': '#3E484F',
+            'dark-on-surface-variant': '#BDC8D1',
+            'dark-outline': '#87929A',
+            'dark-outline-variant': '#3E484F',
+          },
+          borderRadius: {
+            'sm': '4px',
+            'DEFAULT': '8px',
+            'md': '12px',
+            'lg': '16px',
+            'full': '9999px',
+          },
+          spacing: {
+            'gutter-xs': '4px',
+            'gutter-sm': '8px',
+            'gutter-md': '16px',
+            'gutter-lg': '24px',
+            'gutter-xl': '32px',
+            'section': '40px',
+            'page-margin': '24px',
+          },
+          fontFamily: {
+            'display': ['"Alata"', 'sans-serif'],
+            'headline': ['"Alata"', 'sans-serif'],
+            'title': ['"Instrument Sans"', 'sans-serif'],
+            'body': ['"Instrument Sans"', 'sans-serif'],
+            'label': ['"Instrument Sans"', 'sans-serif'],
+            'mono': ['"Spline Sans Mono"', 'monospace'],
+          },
+          fontSize: {
+            'display-lg': ['40px', { lineHeight: '46px', letterSpacing: '-0.5px', fontWeight: '400' }],
+            'display-lg-mobile': ['30px', { lineHeight: '36px', letterSpacing: '-0.25px', fontWeight: '400' }],
+            'headline-lg': ['28px', { lineHeight: '34px', letterSpacing: '-0.2px', fontWeight: '400' }],
+            'headline-md': ['20px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+            'title-md': ['16px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '600' }],
+            'body-md': ['14px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-sm': ['12px', { lineHeight: '18px', letterSpacing: '0.1px', fontWeight: '400' }],
+            'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+            'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.4px', fontWeight: '600' }],
+            'mono-md': ['13px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+            'mono-sm': ['12px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+          },
+          transitionDuration: {
+            'state-change': '120ms',
+            'surface-enter': '200ms',
+          },
+          transitionTimingFunction: {
+            'state-change': 'ease-out',
+            'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Alata&family=Instrument+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0b0e14;
-      --surface: #131822;
-      --surface-2: #1a2130;
-      --border: #263044;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #ff5a36;
-      --green: #22c55e;
-      --blue: #3b82f6;
-      --purple: #a855f7;
-      --amber: #f59e0b;
-      --red: #ef4444;
-    }
-
-    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.45; }
-
-    .container { max-width: 1360px; margin: 0 auto; padding: 18px 22px 40px; }
-
-    /* Header */
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 16px;
-    }
-    .brand h1 { margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
-    .brand-pill { font-size: 0.72rem; background: rgba(255, 90, 54, 0.16); color: #ff8a70; border: 1px solid rgba(255, 90, 54, 0.35); padding: 2px 9px; border-radius: 999px; font-weight: 600; }
-    .subtitle { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
-
-    .badges { display: flex; flex-wrap: wrap; gap: 8px; }
-    .badge {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 5px 11px;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--muted);
-    }
-    .badge strong { color: var(--text); }
-    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .dot.live { background: var(--green); box-shadow: 0 0 6px var(--green); }
-    .dot.memory { background: var(--amber); }
-
-    /* Context Bar */
-    .context-bar {
-      background: linear-gradient(180deg, #161d2b 0%, #121722 100%);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-bottom: 18px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-    @media (max-width: 860px) { .context-bar { grid-template-columns: 1fr; } }
-
-    .meta-row {
-      margin-top: 7px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 12px;
-      align-items: center;
-    }
-    .chip {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      color: #cbd5e1;
-    }
-
-    /* Section Titles */
-    .zone-title {
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--muted);
-      margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-    }
-    .zone-title::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* 3-Step Pipeline */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
-      align-items: stretch;
-    }
-    @media (max-width: 1080px) { .steps-grid { grid-template-columns: 1fr; } }
-
-    /* Results 2x2 Grid */
-    .results-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-    @media (max-width: 960px) { .results-grid { grid-template-columns: 1fr; } }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 11px;
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .card-title {
-      margin: 0;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .step-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.73rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
+    .material-symbols-outlined {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
       white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
     }
-    .helper { font-size: 0.8rem; color: var(--muted); margin: 0; }
-
-    .tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; }
-    .tag-redis { background: rgba(255, 90, 54, 0.16); color: #ff8a70; }
-    .tag-mongo { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
-    .tag-cassandra { background: rgba(59, 130, 246, 0.16); color: #60a5fa; }
-    .tag-neo4j { background: rgba(168, 85, 247, 0.16); color: #c084fc; }
-
-    /* Form Controls */
-    label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 600; }
-    select, input {
-      width: 100%;
-      background: #0b0e14;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 0.86rem;
-      outline: none;
-    }
-    select:focus, input:focus { border-color: var(--blue); }
-
-    button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 9px 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.84rem;
-      transition: opacity 0.15s ease, transform 0.05s ease;
-    }
-    button:hover { opacity: 0.92; }
-    button:active { transform: translateY(1px); }
-    button.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
-    button.success { background: var(--green); color: #052e16; font-weight: 700; }
-    button.danger { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
-    button.sm { padding: 5px 10px; font-size: 0.76rem; }
-
-    .row { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
-    .row > * { flex: 1; min-width: 110px; }
-
-    /* Queue Status Banner */
-    .status-box {
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.84rem;
-      border: 1px solid var(--border);
-      background: #0d1118;
-    }
-    .status-box.in-queue {
-      background: rgba(34, 197, 94, 0.1);
-      border-color: rgba(34, 197, 94, 0.45);
-      color: #bbf7d0;
-    }
-    .status-box.not-in-queue {
-      background: rgba(245, 158, 11, 0.1);
-      border-color: rgba(245, 158, 11, 0.35);
-      color: #fde68a;
-    }
-
-    /* Sector Cards */
-    .sectors-list { display: flex; flex-direction: column; gap: 8px; }
-    .sector-card {
-      background: #0c1017;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .sector-card:hover { border-color: #435370; }
-    .sector-card.selected {
-      border-color: var(--accent);
-      background: rgba(255, 90, 54, 0.09);
-      box-shadow: inset 0 0 0 1px var(--accent);
-    }
-    .sector-top { display: flex; justify-content: space-between; align-items: center; }
-    .sector-name { font-weight: 600; font-size: 0.88rem; }
-    .sector-price { font-weight: 700; color: #4ade80; font-size: 0.9rem; }
-    .sector-bar-wrap { height: 5px; background: #1e2636; border-radius: 999px; overflow: hidden; margin: 6px 0 5px; }
-    .sector-bar { height: 100%; background: var(--blue); border-radius: 999px; }
-    .sector-foot { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--muted); }
-
-    /* Step 3: Active Reservation vs Empty */
-    .res-active-card {
-      background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.45);
-      border-radius: 12px;
-      padding: 13px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .res-empty-card {
-      background: #0c1017;
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 20px 14px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-    .ttl-badge {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fde047;
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      font-family: Consolas, monospace;
-    }
-
-    /* Scrollable Lists */
-    .list {
-      max-height: 195px;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 5px 9px;
-      background: #0b0e14;
-      font-size: 0.81rem;
-    }
-    .item {
-      padding: 6px 4px;
-      border-bottom: 1px solid #171e2b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-    .item:last-child { border-bottom: none; }
-    .item.me {
-      background: rgba(34, 197, 94, 0.14);
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      border-radius: 6px;
-      padding: 6px 8px;
-      margin: 3px 0;
-      color: #dcfce7;
-    }
-    .mono { font-family: Consolas, monospace; font-size: 0.76rem; color: #cbd5e1; }
-    .empty { color: var(--muted); padding: 12px 6px; text-align: center; font-size: 0.8rem; }
-
-    /* Tickets */
-    .ticket-item {
-      background: #0c1017;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--green);
-      border-radius: 9px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-    .ticket-qr { font-family: Consolas, monospace; font-size: 0.74rem; background: var(--surface-2); padding: 2px 7px; border-radius: 5px; color: #93c5fd; }
-
-    /* Fraud Alerts */
-    .alert {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.42);
-      color: #fecaca;
-      padding: 9px 11px;
-      border-radius: 9px;
-      font-size: 0.81rem;
-    }
-
-    /* Filter Pills */
-    .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .pill-btn {
-      background: var(--surface-2);
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      cursor: pointer;
-    }
-    .pill-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #162032;
-      border: 1px solid var(--blue);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 0.86rem;
-      display: none;
-      z-index: 99;
-      max-width: 420px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-    .toast.error { background: #2b1215; border-color: var(--red); color: #fecaca; }
-    .toast.success { background: #0d261a; border-color: var(--green); color: #dcfce7; }
   </style>
 </head>
-<body>
-  <div class="container">
-    <!-- Cabeçalho -->
-    <header>
-      <div class="brand">
-        <h1>TICKETS PULSE <span class="brand-pill">Marco 2 · NoSQL Poliglota</span></h1>
-        <div class="subtitle">Simulador interativo de venda de ingressos em alta demanda (Redis + MongoDB + Cassandra + Neo4j)</div>
+<body class="bg-light-background dark:bg-dark-background text-light-on-background dark:text-dark-on-background font-body antialiased">
+  <div class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar (Stitch Design) -->
+    <header class="sticky top-0 z-30 bg-light-surface-container-low dark:bg-dark-surface-container-low border-b border-light-outline-variant dark:border-dark-outline-variant">
+      <div class="max-w-7xl mx-auto px-page-margin py-gutter-md flex flex-wrap items-center justify-between gap-gutter-md">
+
+        <!-- Brand Identity -->
+        <div class="flex items-center gap-gutter-md">
+          <div class="w-9 h-9 rounded bg-light-surface-container-high dark:bg-dark-surface-container-high border border-light-outline-variant dark:border-dark-outline-variant flex items-center justify-center text-accent-cyan">
+            <span class="material-symbols-outlined text-headline-md" aria-hidden="true">bolt</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-headline text-title-md text-light-on-surface dark:text-dark-on-surface tracking-tight">Tickets Pulse</span>
+            <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">NoSQL Distributed Queue · Marco 2</span>
+          </div>
+        </div>
+
+        <!-- Primary Navigation Tabs (User Experience vs Professor Evaluation) -->
+        <div data-component-id="tabs-with-icon" data-component-type="tabs" data-component-variant="with-icon">
+          <div role="tablist" aria-label="Dashboard perspectives" class="inline-flex items-center gap-gutter-xs p-gutter-xs rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant">
+            <button role="tab" id="tab-ux" type="button" aria-selected="true" aria-controls="panel-ux" tabindex="0" class="inline-flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-sm bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary transition-colors duration-state-change ease-state-change">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">confirmation_number</span>
+              <span class="font-body text-label-lg">User Experience</span>
+            </button>
+            <button role="tab" id="tab-prof" type="button" aria-selected="false" aria-controls="panel-prof" tabindex="-1" class="inline-flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant hover:text-light-on-surface dark:hover:text-dark-on-surface transition-colors duration-state-change ease-state-change">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">terminal</span>
+              <span class="font-body text-label-lg">Professor Evaluation</span>
+              <span id="nav-log-badge" class="px-1.5 py-0.5 rounded-full bg-dark-surface-container-highest text-accent-cyan font-mono text-mono-sm">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Cluster Status + Event & Active User Selector -->
+        <div class="flex flex-wrap items-center gap-gutter-sm">
+          <div id="dbBadges" class="hidden xl:inline-flex items-center gap-gutter-sm px-gutter-md py-gutter-xs rounded-full bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant">
+            <span class="w-2 h-2 rounded-full bg-accent-teal" aria-hidden="true"></span>
+            <span id="header-throughput" class="font-mono text-mono-sm tabular-nums text-light-on-surface dark:text-dark-on-surface">15,420 req/s</span>
+          </div>
+
+          <!-- Event Selector -->
+          <div class="inline-flex items-center gap-gutter-xs px-gutter-sm py-1 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant">
+            <span class="material-symbols-outlined text-body-md text-accent-teal" aria-hidden="true">stadium</span>
+            <select id="eventSelect" aria-label="Selecionar Evento" class="bg-transparent border-none py-0 pl-1 pr-6 font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:ring-0 cursor-pointer"></select>
+          </div>
+
+          <!-- User Persona Selector -->
+          <div class="inline-flex items-center gap-gutter-xs px-gutter-sm py-1 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant">
+            <span class="material-symbols-outlined text-body-md text-light-primary dark:text-dark-primary" aria-hidden="true">person</span>
+            <select id="userSelect" aria-label="Selecionar Usuário" class="bg-transparent border-none py-0 pl-1 pr-6 font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:ring-0 cursor-pointer">
+              <option value="usr-victor" class="bg-dark-surface text-dark-on-surface">usuario:usr-victor (Victor)</option>
+              <option value="usr-leo" class="bg-dark-surface text-dark-on-surface">usuario:usr-leo (Leonardo)</option>
+              <option value="usr-ana" class="bg-dark-surface text-dark-on-surface">usuario:usr-ana (Ana Clara)</option>
+              <option value="usr-cambista-1" class="bg-dark-surface text-dark-on-surface">usuario:usr-cambista-1 (Suspeito A)</option>
+              <option value="usr-cambista-2" class="bg-dark-surface text-dark-on-surface">usuario:usr-cambista-2 (Suspeito B)</option>
+            </select>
+          </div>
+        </div>
+
       </div>
-      <div class="badges" id="dbBadges">Carregando bancos...</div>
     </header>
 
-    <!-- ZONA 1: Contexto (Qual evento e qual usuário estamos simulando?) -->
-    <section class="context-bar">
-      <div>
-        <label for="eventSelect">1. Evento selecionado (Catálogo MongoDB)</label>
-        <select id="eventSelect" onchange="refreshAll()"></select>
-        <div class="meta-row" id="eventMeta"></div>
-      </div>
-      <div>
-        <label for="userSelect">2. Comprador que você está simulando agora</label>
-        <select id="userSelect" onchange="onUserChange()">
-          <option value="usr-victor">👤 Victor Zainote (usr-victor) — Comprador legítimo</option>
-          <option value="usr-leo">👤 Leonardo Soares (usr-leo) — Comprador legítimo</option>
-          <option value="usr-ana">👤 Ana Clara (usr-ana) — Compradora legítima</option>
-          <option value="usr-cambista-1">🕵️ Conta Suspeita A (usr-cambista-1) — Simular Cambista</option>
-          <option value="usr-cambista-2">🕵️ Conta Suspeita B (usr-cambista-2) — Simular Cambista</option>
-        </select>
-        <div class="meta-row" id="userHint"></div>
-      </div>
-    </section>
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-page-margin py-gutter-lg flex flex-col gap-gutter-lg">
 
-    <!-- ZONA 2: Fluxo de Compra em 3 Passos -->
-    <div class="zone-title">Jornada de Compra (Siga os Passos 1 → 2 → 3)</div>
-    <div class="steps-grid">
-      <!-- PASSO 1: FILA VIRTUAL -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title"><span class="step-badge">Passo 1</span> Fila Virtual</h2>
-            <p class="helper">Ordena chegadas por timestamp no Redis (<code>ZADD</code> / <code>ZRANK</code>).</p>
-          </div>
-          <span class="tag tag-redis">Redis ZSET</span>
-        </div>
+      <!-- =================================================================== -->
+      <!-- PANEL 1: USER EXPERIENCE (Ticket Purchase Interface from Stitch)    -->
+      <!-- =================================================================== -->
+      <section role="tabpanel" id="panel-ux" aria-labelledby="tab-ux" tabindex="0" class="flex flex-col gap-gutter-lg">
 
-        <div id="queueStatusBanner" class="status-box not-in-queue">Verificando fila...</div>
-
-        <div class="row">
-          <button onclick="enterQueue()">Entrar na Fila</button>
-          <button class="secondary" onclick="burstQueue()">Simular Pico (+15 fãs)</button>
-        </div>
-
-        <div>
-          <label id="queueListLabel">Ordem atual da fila</label>
-          <div class="list" id="queueList"></div>
-        </div>
-      </section>
-
-      <!-- PASSO 2: ESCOLHER SETOR & RESERVAR -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title"><span class="step-badge">Passo 2</span> Escolher Setor & Reservar</h2>
-            <p class="helper">Clique em um setor e reserve. O Redis desconta o estoque atomicamente (<code>DECRBY</code>).</p>
-          </div>
-          <span class="tag tag-mongo">Mongo + Redis</span>
-        </div>
-
-        <div class="sectors-list" id="sectorsList"></div>
-
-        <!-- Seletor oculto sincronizado para manter compatibilidade -->
-        <select id="sectorSelect" style="display:none;" onchange="updatePricePreview()"></select>
-
-        <div class="row" style="margin-top: auto; padding-top: 6px;">
-          <div style="max-width: 95px;">
-            <label for="qtyInput">Qtd (1–6)</label>
-            <input id="qtyInput" type="number" min="1" max="6" value="2" oninput="updatePricePreview()" />
-          </div>
-          <div>
-            <label>Valor Total</label>
-            <div id="pricePreview" style="font-size: 1.05rem; font-weight: 700; color: #4ade80; padding: 6px 0;">R$ 0,00</div>
-          </div>
-          <button onclick="createReservation()" style="flex: 1.4;">Reservar (TTL 10m)</button>
-        </div>
-      </section>
-
-      <!-- PASSO 3: CHECKOUT OU EXPIRAÇÃO -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title"><span class="step-badge">Passo 3</span> Pagamento (Checkout)</h2>
-            <p class="helper">Confirme a compra para gravar no Cassandra, MongoDB e Neo4j, ou simule o fim do TTL.</p>
-          </div>
-          <span class="tag tag-redis">Poliglota (4 BDs)</span>
-        </div>
-
-        <!-- Quando o usuário NÃO tem reserva ativa -->
-        <div id="noReservationBox" class="res-empty-card">
-          Nenhuma reserva ativa para <strong id="emptyResUser">usr-victor</strong>.<br>
-          <span style="font-size:0.78rem;">Escolha um setor no <strong>Passo 2</strong> e clique em <strong>Reservar</strong>.</span>
-        </div>
-
-        <!-- Quando o usuário TEM reserva ativa -->
-        <div id="activeReservationBox" class="res-active-card" style="display:none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-            <strong style="color:#86efac; font-size:0.9rem;">✅ Reserva Ativa (<span id="resUserLabel"></span>)</strong>
-            <span class="ttl-badge" id="resTtlBadge">⏱ TTL: 600s</span>
-          </div>
-          <div id="resDetails" style="font-size:0.84rem; color:var(--text);"></div>
-
-          <div class="row">
-            <div>
-              <label for="deviceInput">Dispositivo (Neo4j)</label>
-              <input id="deviceInput" value="dev-notebook-victor" />
+        <!-- Event & Virtual Queue Status Banner -->
+        <article data-component-id="card-outlined" class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+          <div class="lg:col-span-7 flex flex-col gap-gutter-sm">
+            <div class="flex flex-wrap items-center gap-gutter-sm">
+              <span id="queue-status-pill" class="inline-flex items-center gap-gutter-xs px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high text-accent-teal font-mono text-mono-sm">
+                <span class="material-symbols-outlined text-body-sm" aria-hidden="true">verified</span>
+                <span id="queue-status-text">Queue Ready</span>
+              </span>
+              <span id="event-meta-line" class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Carregando evento...</span>
             </div>
-            <div>
-              <label for="cardInput">Cartão Hash (Neo4j)</label>
-              <input id="cardInput" value="card-hash-5555" />
+            <h1 id="event-title-heading" class="font-headline text-headline-lg text-light-on-surface dark:text-dark-on-surface text-balance">
+              Festival Pulse Brasília 2026
+            </h1>
+            <p id="queue-helper-desc" class="font-body text-body-md text-light-on-surface-variant dark:text-dark-on-surface-variant text-pretty">
+              Adicione sua sessão na fila virtual ordenada por timestamp (Redis Sorted Set) ou selecione um setor abaixo para travar seu ingresso com TTL.
+            </p>
+            <div class="flex flex-wrap items-center gap-gutter-sm pt-gutter-xs">
+              <button type="button" onclick="enterQueue()" class="inline-flex items-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary font-body text-label-sm hover:opacity-90 transition-opacity">
+                <span class="material-symbols-outlined text-body-md">login</span>
+                <span>Entrar na Fila (ZADD)</span>
+              </button>
+              <button type="button" onclick="burstQueue()" class="inline-flex items-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-light-surface-container-high dark:bg-dark-surface-container-high border border-light-outline-variant dark:border-dark-outline-variant text-light-on-surface dark:text-dark-on-surface font-body text-label-sm hover:border-accent-cyan transition-colors">
+                <span class="material-symbols-outlined text-body-md text-accent-cyan">bolt</span>
+                <span>Simulate Spike (+15 Users)</span>
+              </button>
+              <button id="btn-expire-ttl" type="button" onclick="expireActiveReservation()" class="hidden inline-flex items-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-dark-error-container/50 border border-dark-error text-dark-on-error-container font-body text-label-sm hover:opacity-90 transition-opacity">
+                <span class="material-symbols-outlined text-body-md">timer_off</span>
+                <span>Forçar Expiração do TTL (INCRBY)</span>
+              </button>
             </div>
           </div>
 
-          <button class="success" onclick="doCheckout()" style="width:100%; padding:11px;">
-            ✅ Confirmar Compra (Checkout Poliglota)
-          </button>
-          <button class="danger sm" onclick="expireActiveReservation()" style="width:100%;">
-            ⏳ Simular Expiração do TTL (Estornar ao Redis)
-          </button>
-        </div>
+          <div class="lg:col-span-5 grid grid-cols-2 gap-gutter-md">
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-xs">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Queue Rank</span>
+              <span id="banner-queue-rank" class="font-mono text-headline-md tabular-nums text-accent-cyan">-- / 0</span>
+              <span id="banner-queue-sub" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">ZRANK fila:evento</span>
+            </div>
 
-        <!-- Outras reservas ativas (de outros usuários) -->
-        <div id="otherReservationsWrap" style="display:none;">
-          <label>Reservas ativas de outros usuários</label>
-          <div class="list" id="reservationsList" style="max-height: 110px;"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ZONA 3: Visão em Tempo Real dos 4 Bancos NoSQL -->
-    <div class="zone-title">Estado dos Bancos NoSQL em Tempo Real</div>
-    <div class="results-grid">
-      <!-- 1. MongoDB: Ingressos Emitidos e Transferência -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">🎟️ Ingressos Emitidos & Transferência</h2>
-            <p class="helper">Documentos no <strong>MongoDB</strong>. Transferir atualiza o titular e cria aresta <code>TRANSFERIU_PARA</code> no <strong>Neo4j</strong>.</p>
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-xs">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Reservation TTL</span>
+              <span id="ttl-countdown" class="font-mono text-headline-md tabular-nums text-accent-orange">10:00</span>
+              <span id="banner-ttl-sub" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">EXPIRE reserva 600</span>
+            </div>
           </div>
-          <span class="tag tag-mongo">MongoDB + Neo4j</span>
-        </div>
-        <div id="ticketsContainer" style="display:flex; flex-direction:column; gap:8px; max-height: 250px; overflow-y:auto;"></div>
-      </section>
+        </article>
 
-      <!-- 2. Neo4j: Antifraude e Grafo -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">🕵️ Antifraude & Grafo de Relacionamentos</h2>
-            <p class="helper">O <strong>Neo4j</strong> detecta contas diferentes compartilhando o mesmo dispositivo ou cartão.</p>
+        <!-- Main Ticket Purchase Grid (Stitch Screen 1 & 2 Combined) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
+
+          <!-- Left Column (7 cols): Stage Schematic + Sector Selection + Quantity & Attendee + Issued Passes -->
+          <div class="lg:col-span-7 flex flex-col gap-gutter-lg">
+
+            <!-- 1. Interactive Venue Map & Sector Cards -->
+            <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-md">
+              <header class="flex flex-wrap items-center justify-between gap-gutter-sm">
+                <div class="flex flex-col gap-gutter-xs">
+                  <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">1. Select Venue Sector</h2>
+                  <span class="font-body text-body-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Catálogo semiestruturado no MongoDB · Estoque atômico no Redis</span>
+                </div>
+                <span id="total-remaining-label" class="font-mono text-mono-sm text-accent-teal tabular-nums">-- seats open</span>
+              </header>
+
+              <!-- Stage + Bowl Schematic (from Stitch Screen 2) -->
+              <div class="p-gutter-md rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-sm">
+                <div class="w-full py-gutter-sm rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high border border-light-outline-variant dark:border-dark-outline-variant text-center">
+                  <span class="font-mono text-mono-sm uppercase tracking-wider text-accent-cyan">Main Stage · 360° Production</span>
+                </div>
+
+                <div id="sector-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-sm items-stretch">
+                  <!-- Populated dynamically from /api/events -->
+                </div>
+              </div>
+            </article>
+
+            <!-- 2. Quantity, Lock Reservation & Anti-Fraud Telemetry Inputs -->
+            <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-md">
+              <header class="flex flex-wrap items-center justify-between gap-gutter-md">
+                <div class="flex flex-col gap-gutter-xs">
+                  <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">2. Quantity &amp; Session Fingerprint</h2>
+                  <span class="font-body text-body-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Max 6 tickets · Lock atomic stock in Redis &amp; bind device/card in Neo4j</span>
+                </div>
+                <div class="flex items-center gap-gutter-sm">
+                  <button id="qty-dec" type="button" aria-label="Decrease ticket quantity" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface hover:bg-light-surface-container-high dark:hover:bg-dark-surface-container-high transition-colors">
+                    <span class="material-symbols-outlined text-title-md">remove</span>
+                  </button>
+                  <span id="qty-value" class="w-10 text-center font-mono text-headline-md tabular-nums text-light-on-surface dark:text-dark-on-surface">2</span>
+                  <button id="qty-inc" type="button" aria-label="Increase ticket quantity" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface hover:bg-light-surface-container-high dark:hover:bg-dark-surface-container-high transition-colors">
+                    <span class="material-symbols-outlined text-title-md">add</span>
+                  </button>
+                </div>
+              </header>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-md">
+                <label class="flex flex-col gap-gutter-xs">
+                  <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Device Fingerprint (Neo4j Node)</span>
+                  <input id="deviceInput" type="text" value="dev-notebook-victor" class="px-gutter-md py-gutter-sm rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:outline-none focus:border-accent-cyan">
+                </label>
+                <label class="flex flex-col gap-gutter-xs">
+                  <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Payment Card Hash (Neo4j Node)</span>
+                  <input id="cardInput" type="text" value="card-hash-5555" class="px-gutter-md py-gutter-sm rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:outline-none focus:border-accent-cyan">
+                </label>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-gutter-sm pt-gutter-xs border-t border-light-outline-variant dark:border-dark-outline-variant">
+                <span id="user-persona-hint" class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Sessão legítima configurada.</span>
+                <button type="button" onclick="createReservation()" class="inline-flex items-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-light-surface-container-high dark:bg-dark-surface-container-high border border-accent-orange text-accent-orange font-body text-label-sm hover:bg-accent-orange hover:text-dark-on-primary transition-colors">
+                  <span class="material-symbols-outlined text-body-md">timer</span>
+                  <span>Travar Reserva no Redis (DECRBY + TTL 10m)</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- 3. Issued Passes & P2P Transfer (MongoDB + Neo4j) -->
+            <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-md">
+              <header class="flex items-center justify-between gap-gutter-sm">
+                <div class="flex flex-col gap-gutter-xs">
+                  <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">Issued Digital Passes &amp; Transfer</h2>
+                  <span class="font-body text-body-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Documentos emitidos no MongoDB · Transferir cria aresta TRANSFERIU_PARA no Neo4j</span>
+                </div>
+                <span id="tickets-count-badge" class="px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm text-accent-teal">0 passes</span>
+              </header>
+              <div id="tickets-list" class="flex flex-col gap-gutter-sm max-h-72 overflow-y-auto">
+                <!-- Populated dynamically from /api/tickets -->
+              </div>
+            </article>
+
           </div>
-          <span class="tag tag-neo4j">Neo4j Grafos</span>
-        </div>
-        <div id="fraudAlerts" style="display:flex; flex-direction:column; gap:6px;"></div>
-        <div>
-          <label id="graphStatsLabel">Conexões no Grafo</label>
-          <div class="list mono" id="graphSummary" style="max-height: 130px;"></div>
-        </div>
-      </section>
 
-      <!-- 3. Cassandra: Histórico de Compras -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">📜 Histórico de Compras do Evento</h2>
-            <p class="helper">Tabela <code>compras_por_evento</code> no <strong>Cassandra</strong> (Partition Key: <code>evento_id</code>, ordenado por data DESC).</p>
+          <!-- Right Column (5 cols): Payment & Checkout Summary + Active Queue List -->
+          <div class="lg:col-span-5 flex flex-col gap-gutter-lg">
+            <article data-component-id="card-action" class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-md">
+              <header class="flex items-center justify-between gap-gutter-sm pb-gutter-md border-b border-light-outline-variant dark:border-dark-outline-variant">
+                <div class="flex flex-col gap-gutter-xs">
+                  <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">3. Payment &amp; Checkout</h2>
+                  <span id="checkout-redis-key" class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Key: reserva:usr-victor · Status: aguardando</span>
+                </div>
+                <span class="material-symbols-outlined text-headline-md text-accent-cyan" aria-hidden="true">receipt_long</span>
+              </header>
+
+              <!-- Line Items -->
+              <div class="flex flex-col gap-gutter-sm">
+                <div class="flex items-center justify-between gap-gutter-md">
+                  <span id="summary-item-label" class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface">2 × Pista Comum</span>
+                  <span id="summary-subtotal" class="font-mono text-mono-md tabular-nums text-light-on-surface dark:text-dark-on-surface">R$ 440.00</span>
+                </div>
+                <div class="flex items-center justify-between gap-gutter-md">
+                  <span class="font-body text-body-md text-light-on-surface-variant dark:text-dark-on-surface-variant">Platform &amp; Queue Fee (Included)</span>
+                  <span id="summary-fee" class="font-mono text-mono-md tabular-nums text-accent-teal">R$ 0.00</span>
+                </div>
+                <div class="pt-gutter-sm border-t border-light-outline-variant dark:border-dark-outline-variant flex items-center justify-between gap-gutter-md">
+                  <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">Total Due</span>
+                  <span id="summary-total" class="font-mono text-headline-md tabular-nums text-light-primary dark:text-dark-primary">R$ 440.00</span>
+                </div>
+              </div>
+
+              <!-- Payment Method Switcher (Stitch Screen 2) -->
+              <div class="flex flex-col gap-gutter-sm">
+                <div role="tablist" aria-label="Payment method" class="grid grid-cols-2 gap-gutter-xs p-gutter-xs rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant dark:border-dark-outline-variant">
+                  <button role="tab" id="pay-tab-card" type="button" aria-selected="true" class="pay-tab px-gutter-md py-gutter-sm rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high text-light-primary dark:text-dark-primary transition-colors">
+                    <span class="font-body text-label-lg">Credit Card</span>
+                  </button>
+                  <button role="tab" id="pay-tab-pix" type="button" aria-selected="false" class="pay-tab px-gutter-md py-gutter-sm rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant hover:text-light-on-surface dark:hover:text-dark-on-surface transition-colors">
+                    <span class="font-body text-label-lg">Instant PIX</span>
+                  </button>
+                </div>
+
+                <div id="pay-panel-card" class="p-gutter-md rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant flex items-center justify-between gap-gutter-md">
+                  <div class="flex items-center gap-gutter-sm">
+                    <span class="material-symbols-outlined text-title-md text-accent-cyan">credit_card</span>
+                    <div class="flex flex-col">
+                      <span class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface">Visa Corporate •••• 4821</span>
+                      <span id="card-hash-preview" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">Hash: card-hash-5555</span>
+                    </div>
+                  </div>
+                  <span class="font-mono text-mono-sm text-accent-teal">Instant Auth</span>
+                </div>
+
+                <div id="pay-panel-pix" hidden class="hidden p-gutter-md rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant items-center justify-between gap-gutter-md">
+                  <div class="flex items-center gap-gutter-sm">
+                    <span class="material-symbols-outlined text-title-md text-accent-teal">qr_code_2</span>
+                    <div class="flex flex-col">
+                      <span class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface">PIX Instant Settlement</span>
+                      <span class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">Dynamic QR generated on confirm</span>
+                    </div>
+                  </div>
+                  <span class="font-mono text-mono-sm text-accent-teal">0s settle</span>
+                </div>
+              </div>
+
+              <!-- Confirmation Banner -->
+              <div id="checkout-confirmed-box" class="hidden p-gutter-md rounded bg-light-surface-container-high dark:bg-dark-surface-container-high border border-accent-teal flex flex-col gap-gutter-xs">
+                <div class="flex items-center gap-gutter-sm text-accent-teal">
+                  <span class="material-symbols-outlined text-title-md">check_circle</span>
+                  <span class="font-title text-title-md">Persisted across 4 NoSQL Engines</span>
+                </div>
+                <p id="checkout-confirmed-detail" class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">
+                  Table: compras_por_evento (Cassandra) + ingressos (MongoDB) + Grafo (Neo4j). Switch to Professor Evaluation to inspect.
+                </p>
+              </div>
+
+              <footer class="pt-gutter-sm flex flex-col gap-gutter-sm">
+                <button id="btn-confirm-purchase" type="button" onclick="doCheckout()" class="w-full inline-flex items-center justify-center gap-gutter-sm px-gutter-md py-gutter-md rounded bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-cyan transition-opacity">
+                  <span class="material-symbols-outlined text-title-md">lock</span>
+                  <span id="confirm-btn-label" class="font-body text-label-lg">Confirm &amp; Pay R$ 440.00</span>
+                </button>
+                <span class="text-center font-mono text-mono-sm text-light-outline dark:text-dark-outline">
+                  DECRBY estoque + INSERT compras_por_evento + MERGE Neo4j
+                </span>
+              </footer>
+            </article>
+
+            <!-- Live Virtual Queue Snapshot Card -->
+            <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-sm">
+              <header class="flex items-center justify-between gap-gutter-sm">
+                <div class="flex flex-col">
+                  <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">Virtual Queue Live Ranking</span>
+                  <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Redis Sorted Set (ZRANGE WITHSCORES)</span>
+                </div>
+                <span id="queue-count-badge" class="px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm text-accent-cyan">0 waiting</span>
+              </header>
+              <div id="queue-list-box" class="flex flex-col divide-y divide-light-outline-variant dark:divide-dark-outline-variant max-h-56 overflow-y-auto font-mono text-mono-sm">
+                <!-- Populated dynamically from /api/queue/:eventoId -->
+              </div>
+            </article>
           </div>
-          <span class="tag tag-cassandra">Cassandra Wide-Column</span>
+
         </div>
-        <div class="list" id="historyList" style="max-height: 210px;"></div>
       </section>
 
-      <!-- 4. Cassandra: Trilha de Auditoria -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">🛡️ Trilha de Auditoria de Operações</h2>
-            <p class="helper">Tabela <code>auditoria_eventos</code> no <strong>Cassandra</strong> registrando reservas, expirações, compras e transferências.</p>
+      <!-- =================================================================== -->
+      <!-- PANEL 2: PROFESSOR EVALUATION (Stitch Screen 1 Panel 2 + Screen 3)  -->
+      <!-- =================================================================== -->
+      <section role="tabpanel" id="panel-prof" aria-labelledby="tab-prof" tabindex="0" hidden class="hidden flex-col gap-gutter-lg">
+
+        <!-- Top Telemetry KPI Strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-md items-stretch">
+          <article class="h-full p-gutter-md rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col justify-between gap-gutter-xs">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Peak Throughput</span>
+              <span class="material-symbols-outlined text-title-md text-accent-cyan">speed</span>
+            </div>
+            <span id="kpi-throughput" class="font-mono text-headline-lg tabular-nums text-light-on-surface dark:text-dark-on-surface">15,420 req/s</span>
+            <span class="font-mono text-mono-sm text-accent-teal">100k users · 50k tickets</span>
+          </article>
+
+          <article class="h-full p-gutter-md rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col justify-between gap-gutter-xs">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Redis Key-Value</span>
+              <span class="material-symbols-outlined text-title-md text-accent-orange">memory</span>
+            </div>
+            <span class="font-mono text-headline-lg tabular-nums text-light-on-surface dark:text-dark-on-surface">0.84 ms</span>
+            <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">ZADD / ZRANK / DECRBY / TTL</span>
+          </article>
+
+          <article class="h-full p-gutter-md rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col justify-between gap-gutter-xs">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Cassandra Wide-Column</span>
+              <span class="material-symbols-outlined text-title-md text-accent-teal">storage</span>
+            </div>
+            <span id="kpi-purchases-count" class="font-mono text-headline-lg tabular-nums text-light-on-surface dark:text-dark-on-surface">4.20 ms</span>
+            <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Query-First: compras_por_evento</span>
+          </article>
+
+          <article class="h-full p-gutter-md rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col justify-between gap-gutter-xs">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <span class="font-body text-label-sm uppercase text-light-on-surface-variant dark:text-dark-on-surface-variant">Neo4j Anti-Fraud Alerts</span>
+              <span class="material-symbols-outlined text-title-md text-accent-purple">hub</span>
+            </div>
+            <span id="kpi-fraud-count" class="font-mono text-headline-lg tabular-nums text-accent-orange">0 rings</span>
+            <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Shared Device &amp; Card Graph</span>
+          </article>
+        </div>
+
+        <!-- Polyglot NoSQL Architecture & Data Flow (4 NoSQL Families) -->
+        <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-lg">
+          <header class="flex flex-wrap items-center justify-between gap-gutter-md">
+            <div class="flex flex-col gap-gutter-xs">
+              <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">Polyglot NoSQL Architecture &amp; Data Flow (4 Families)</h2>
+              <p class="font-body text-body-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">
+                Redis absorve fila e reservas com TTL (Chave-Valor); MongoDB armazena catálogo e ingressos (Documentos); Cassandra grava histórico particionado por evento (Wide-Column); Neo4j detecta anéis de cambismo (Grafos).
+              </p>
+            </div>
+            <div class="flex items-center gap-gutter-sm">
+              <span class="px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm text-accent-cyan">Consistent Hashing</span>
+              <span class="px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm text-accent-teal">BASE + Query-First</span>
+            </div>
+          </header>
+
+          <!-- 4-Family Topology Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-md items-stretch">
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-accent-orange flex flex-col justify-between gap-gutter-sm">
+              <div class="flex items-center justify-between text-accent-orange">
+                <span class="font-body text-label-sm uppercase">1. Key-Value</span>
+                <span class="font-mono text-mono-sm">AP · BASE</span>
+              </div>
+              <div>
+                <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface block">Redis Cluster</span>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">ZSET (Fila) · HASH+TTL · DECRBY</span>
+              </div>
+            </div>
+
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-accent-cyan flex flex-col justify-between gap-gutter-sm">
+              <div class="flex items-center justify-between text-accent-cyan">
+                <span class="font-body text-label-sm uppercase">2. Documents</span>
+                <span class="font-mono text-mono-sm">JSON Schema</span>
+              </div>
+              <div>
+                <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface block">MongoDB</span>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">eventos · usuarios · ingressos</span>
+              </div>
+            </div>
+
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-accent-teal flex flex-col justify-between gap-gutter-sm">
+              <div class="flex items-center justify-between text-accent-teal">
+                <span class="font-body text-label-sm uppercase">3. Wide-Column</span>
+                <span class="font-mono text-mono-sm">QUORUM</span>
+              </div>
+              <div>
+                <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface block">Cassandra Ring</span>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">compras_por_evento · auditoria</span>
+              </div>
+            </div>
+
+            <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-accent-purple flex flex-col justify-between gap-gutter-sm">
+              <div class="flex items-center justify-between text-accent-purple">
+                <span class="font-body text-label-sm uppercase">4. Graph DB</span>
+                <span class="font-mono text-mono-sm">Cypher</span>
+              </div>
+              <div>
+                <span class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface block">Neo4j Anti-Fraud</span>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">USOU_DISPOSITIVO · PAGOU_COM</span>
+              </div>
+            </div>
           </div>
-          <span class="tag tag-cassandra">Cassandra Wide-Column</span>
-        </div>
-        <div class="list" id="auditList" style="max-height: 210px;"></div>
-      </section>
-    </div>
 
-    <!-- 5. Inspector de Comandos NoSQL -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">💻 Inspector de Comandos NoSQL Executados</h2>
-          <p class="helper">Veja os comandos nativos (Redis, MongoDB, CQL e Cypher) disparados a cada clique acima.</p>
+          <!-- Live Neo4j Fraud Rings & Cassandra Query-First Partition Data -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter-md">
+            <!-- Neo4j Anti-Fraud Detection -->
+            <div class="p-gutter-md rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-sm">
+              <div class="flex items-center justify-between gap-gutter-sm">
+                <span class="font-title text-title-md text-accent-purple">Neo4j Fraud Ring Detection &amp; Graph Edges</span>
+                <span id="graph-nodes-edges-count" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">0 nodes · 0 edges</span>
+              </div>
+              <div id="fraud-alerts-list" class="flex flex-col gap-gutter-xs"></div>
+              <div id="graph-edges-list" class="flex flex-col gap-1 font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant max-h-36 overflow-y-auto pt-gutter-xs border-t border-light-outline-variant dark:border-dark-outline-variant"></div>
+            </div>
+
+            <!-- Cassandra Partition Table Rows -->
+            <div class="p-gutter-md rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-sm">
+              <div class="flex items-center justify-between gap-gutter-sm">
+                <span class="font-title text-title-md text-accent-teal">Cassandra Partition: compras_por_evento</span>
+                <span class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">CLUSTERING ORDER BY comprado_em DESC</span>
+              </div>
+              <div id="cassandra-purchases-list" class="flex flex-col divide-y divide-light-outline-variant dark:divide-dark-outline-variant font-mono text-mono-sm max-h-52 overflow-y-auto"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Backend Interaction Logs + Trace Inspector (Stitch Screen 3) -->
+        <div class="flex flex-col gap-gutter-md">
+          <div class="flex flex-wrap items-center justify-between gap-gutter-md">
+            <div class="flex flex-wrap items-center gap-gutter-md">
+              <div class="relative min-w-72">
+                <span class="material-symbols-outlined text-title-md text-light-outline dark:text-dark-outline absolute left-3 top-2.5">search</span>
+                <input id="log-search" type="text" placeholder="Filter by key, command, or user..." class="w-full pl-10 pr-gutter-md py-gutter-sm rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface placeholder:text-light-outline dark:placeholder:text-dark-outline focus:outline-none focus:border-accent-cyan">
+              </div>
+
+              <div role="tablist" aria-label="Filter logs by engine" class="inline-flex items-center gap-gutter-xs p-gutter-xs rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant dark:border-dark-outline-variant">
+                <button type="button" data-engine="ALL" class="engine-tab px-gutter-md py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high text-light-primary dark:text-dark-primary font-body text-label-sm">All</button>
+                <button type="button" data-engine="REDIS" class="engine-tab px-gutter-md py-gutter-xs rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm">Redis</button>
+                <button type="button" data-engine="MONGO" class="engine-tab px-gutter-md py-gutter-xs rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm">MongoDB</button>
+                <button type="button" data-engine="CASSANDRA" class="engine-tab px-gutter-md py-gutter-xs rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm">Cassandra</button>
+                <button type="button" data-engine="NEO4J" class="engine-tab px-gutter-md py-gutter-xs rounded-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm">Neo4j</button>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-gutter-md">
+              <span id="log-count-label" class="font-mono text-mono-sm tabular-nums text-light-on-surface-variant dark:text-dark-on-surface-variant">Showing 0 events</span>
+              <button type="button" onclick="burstQueue()" class="inline-flex items-center justify-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-light-surface-container-high dark:bg-dark-surface-container-high border border-light-outline-variant dark:border-dark-outline-variant text-light-primary dark:text-dark-primary hover:bg-light-surface-container-highest dark:hover:bg-dark-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined text-title-md">bolt</span>
+                <span class="font-body text-label-lg">Simulate Spike</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2-Column Split: Log Stream Table (8 cols) + Trace Inspector (4 cols) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
+            <div class="lg:col-span-8">
+              <div class="w-full rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container dark:bg-dark-surface-container overflow-x-auto max-h-[460px] overflow-y-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead class="sticky top-0 bg-light-surface-container-high dark:bg-dark-surface-container-high border-b border-light-outline-variant dark:border-dark-outline-variant">
+                    <tr>
+                      <th scope="col" class="px-gutter-md py-gutter-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm uppercase">Timestamp</th>
+                      <th scope="col" class="px-gutter-md py-gutter-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm uppercase">Engine</th>
+                      <th scope="col" class="px-gutter-md py-gutter-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm uppercase">Command / Query</th>
+                      <th scope="col" class="px-gutter-md py-gutter-sm text-right text-light-on-surface-variant dark:text-dark-on-surface-variant font-body text-label-sm uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stream-tbody" class="divide-y divide-light-outline-variant dark:divide-dark-outline-variant"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right (4 cols): Trace & Payload Inspector -->
+            <div class="lg:col-span-4">
+              <article class="p-gutter-lg rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-md">
+                <header class="flex items-center justify-between gap-gutter-sm pb-gutter-sm border-b border-light-outline-variant dark:border-dark-outline-variant">
+                  <div class="flex flex-col gap-gutter-xs">
+                    <h2 class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">Trace Inspector</h2>
+                    <span id="trace-id-label" class="font-mono text-mono-sm text-accent-cyan">Clique em um comando ao lado</span>
+                  </div>
+                  <span id="trace-engine-badge" class="px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm text-accent-orange">NOSQL</span>
+                </header>
+
+                <div class="flex flex-col gap-gutter-sm">
+                  <div class="flex items-center justify-between gap-gutter-sm">
+                    <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Target Node</span>
+                    <span id="trace-node" class="font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface">cluster-node-01</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-gutter-sm">
+                    <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">CAP / Consistency</span>
+                    <span id="trace-cap" class="font-mono text-mono-sm text-accent-teal">AP · BASE</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-gutter-xs">
+                  <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Executed Command / CQL / Cypher</span>
+                  <pre class="p-gutter-sm rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface overflow-x-auto whitespace-pre-wrap break-all leading-relaxed"><code id="trace-payload">Selecione uma linha na tabela para inspecionar o comando NoSQL executado.</code></pre>
+                </div>
+
+                <div class="p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant dark:border-dark-outline-variant flex flex-col gap-gutter-xs">
+                  <span class="font-body text-label-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Architectural Justification</span>
+                  <p id="trace-note" class="font-body text-body-sm text-light-on-surface dark:text-dark-on-surface text-pretty">
+                    Cada operação é roteada para a família NoSQL otimizada para seu padrão de acesso (Chave-Valor, Documentos, Wide-Column ou Grafos).
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
         </div>
-        <div class="filter-pills" id="logFilters">
-          <button class="pill-btn active" onclick="setLogFilter('ALL', this)">Todos</button>
-          <button class="pill-btn" onclick="setLogFilter('REDIS', this)">Redis</button>
-          <button class="pill-btn" onclick="setLogFilter('MONGO', this)">MongoDB</button>
-          <button class="pill-btn" onclick="setLogFilter('CASSANDRA', this)">Cassandra</button>
-          <button class="pill-btn" onclick="setLogFilter('NEO4J', this)">Neo4j</button>
-        </div>
-      </div>
-      <div class="list mono" id="logsList" style="max-height: 220px;"></div>
-    </section>
+
+      </section>
+
+    </main>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden px-gutter-md py-gutter-sm rounded bg-dark-surface-container-high border border-accent-cyan text-dark-on-surface font-body text-body-md shadow-lg"></div>
 
   <script>
     let eventsCache = [];
     let logsCache = [];
-    let currentLogFilter = 'ALL';
+    let activeEngineFilter = 'ALL';
+    let logSearchTerm = '';
+    let selectedLogIndex = 0;
+    let selectedSectorCode = '';
+    let quantity = 2;
+    let activeReservation = null;
+    let liveTtlSeconds = null;
+    let throughput = 15420;
     let toastTimer = null;
-    let activeTtlSeconds = null;
 
-    const USER_NAMES = {
-      'usr-victor': 'Victor Zainote',
-      'usr-leo': 'Leonardo Soares',
-      'usr-ana': 'Ana Clara',
-      'usr-cambista-1': 'Conta Suspeita A',
-      'usr-cambista-2': 'Conta Suspeita B',
-    };
-
-    const USER_DEFAULTS = {
-      'usr-victor': { device: 'dev-notebook-victor', card: 'card-hash-5555', hint: 'Dispositivo próprio (dev-notebook-victor) e cartão próprio (card-hash-5555).' },
-      'usr-leo': { device: 'dev-iphone-leo', card: 'card-hash-1010', hint: 'Dispositivo próprio (dev-iphone-leo) e cartão próprio (card-hash-1010).' },
-      'usr-ana': { device: 'dev-android-ana', card: 'card-hash-2020', hint: 'Dispositivo próprio (dev-android-ana) e cartão próprio (card-hash-2020).' },
-      'usr-cambista-1': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Usa o mesmo device (dev-bot-farm-99) e cartão (card-hash-9999) da Conta Suspeita B!' },
-      'usr-cambista-2': { device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Usa o mesmo device (dev-bot-farm-99) e cartão (card-hash-9999) da Conta Suspeita A!' },
+    const USER_PROFILES = {
+      'usr-victor': { name: 'Victor Zainote', device: 'dev-notebook-victor', card: 'card-hash-5555', hint: 'Comprador legítimo · Dispositivo e cartão exclusivos.' },
+      'usr-leo': { name: 'Leonardo Soares', device: 'dev-iphone-leo', card: 'card-hash-1010', hint: 'Comprador legítimo · Possui compra histórica inicial.' },
+      'usr-ana': { name: 'Ana Clara', device: 'dev-android-ana', card: 'card-hash-2020', hint: 'Compradora legítima · Ideal para receber transferência.' },
+      'usr-cambista-1': { name: 'Conta Suspeita A', device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Simulação de cambista: compartilha device/cartão com Suspeito B.' },
+      'usr-cambista-2': { name: 'Conta Suspeita B', device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Simulação de cambista: compartilha device/cartão com Suspeito A.' },
     };
 
     const TRANSFER_TARGETS = [
@@ -602,38 +693,16 @@
       { id: 'usr-cambista-1', label: 'Conta Suspeita A (usr-cambista-1)' },
     ];
 
-    // Cronômetro regressivo visual de 1 segundo para o TTL da reserva ativa
-    setInterval(() => {
-      if (activeTtlSeconds !== null && activeTtlSeconds > 0) {
-        activeTtlSeconds -= 1;
-        const badge = document.getElementById('resTtlBadge');
-        if (badge) badge.textContent = `⏱ Expira em ${activeTtlSeconds}s`;
-      }
-    }, 1000);
-
-    function formatMemberName(member) {
-      const cleanId = String(member).replace(/^usuario:/, '');
-      return USER_NAMES[cleanId] ? `${USER_NAMES[cleanId]} (${cleanId})` : cleanId;
-    }
-
-    function isMemberUser(member, userId) {
-      return member === userId || member === `usuario:${userId}`;
-    }
-
-    function showToast(msg, type = 'info') {
+    function showToast(msg, isError = false) {
       const el = document.getElementById('toast');
       el.textContent = msg;
-      el.className = `toast ${type === 'error' ? 'error' : type === 'success' ? 'success' : ''}`;
-      el.style.display = 'block';
+      el.className = 'fixed bottom-5 right-5 z-50 px-gutter-md py-gutter-sm rounded font-body text-body-md shadow-lg ' +
+        (isError
+          ? 'bg-dark-error-container border border-dark-error text-dark-on-error-container'
+          : 'bg-dark-surface-container-high border border-accent-teal text-dark-on-surface');
+      el.classList.remove('hidden');
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3800);
-    }
-
-    function setLogFilter(filter, btn) {
-      currentLogFilter = filter;
-      document.querySelectorAll('#logFilters .pill-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderLogs();
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 3800);
     }
 
     async function api(url, method = 'GET', body) {
@@ -647,105 +716,236 @@
       return data;
     }
 
-    async function loadHealth() {
-      const data = await api('/api/health');
-      const container = document.getElementById('dbBadges');
-      container.innerHTML = Object.entries(data.databases)
-        .map(([name, info]) => {
-          const modeLabel = info.mode === 'memory' ? 'Em Memória' : 'Docker Live';
-          return `<span class="badge"><span class="dot ${info.mode}"></span><strong>${name.toUpperCase()}</strong> (${info.family}) · ${modeLabel}</span>`;
-        })
-        .join('');
+    function formatMMSS(sec) {
+      const s = Math.max(0, Number(sec) || 0);
+      const mins = String(Math.floor(s / 60)).padStart(2, '0');
+      const secs = String(s % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
     }
 
-    function onUserChange() {
-      const userId = document.getElementById('userSelect').value;
-      const profile = USER_DEFAULTS[userId] || USER_DEFAULTS['usr-victor'];
+    // Live 1s countdown for Reservation TTL
+    setInterval(() => {
+      if (liveTtlSeconds !== null && liveTtlSeconds > 0) {
+        liveTtlSeconds -= 1;
+        document.getElementById('ttl-countdown').textContent = formatMMSS(liveTtlSeconds);
+      }
+    }, 1000);
+
+    // Tabs: User Experience vs Professor Evaluation
+    const tabUx = document.getElementById('tab-ux');
+    const tabProf = document.getElementById('tab-prof');
+    const panelUx = document.getElementById('panel-ux');
+    const panelProf = document.getElementById('panel-prof');
+
+    function switchMainTab(target) {
+      const isUx = target === 'ux';
+      tabUx.setAttribute('aria-selected', String(isUx));
+      tabProf.setAttribute('aria-selected', String(!isUx));
+      const activeCls = ['bg-light-primary', 'dark:bg-dark-primary', 'text-light-on-primary', 'dark:text-dark-on-primary'];
+      const inactiveCls = ['text-light-on-surface-variant', 'dark:text-dark-on-surface-variant'];
+
+      if (isUx) {
+        tabUx.classList.add(...activeCls);
+        tabUx.classList.remove(...inactiveCls);
+        tabProf.classList.remove(...activeCls);
+        tabProf.classList.add(...inactiveCls);
+        panelUx.hidden = false;
+        panelUx.classList.remove('hidden');
+        panelProf.hidden = true;
+        panelProf.classList.add('hidden');
+        panelProf.classList.remove('flex');
+      } else {
+        tabProf.classList.add(...activeCls);
+        tabProf.classList.remove(...inactiveCls);
+        tabUx.classList.remove(...activeCls);
+        tabUx.classList.add(...inactiveCls);
+        panelProf.hidden = false;
+        panelProf.classList.remove('hidden');
+        panelProf.classList.add('flex');
+        panelUx.hidden = true;
+        panelUx.classList.add('hidden');
+      }
+    }
+    tabUx.addEventListener('click', () => switchMainTab('ux'));
+    tabProf.addEventListener('click', () => switchMainTab('prof'));
+
+    // Payment method tabs (Credit Card vs Instant PIX)
+    const payTabCard = document.getElementById('pay-tab-card');
+    const payTabPix = document.getElementById('pay-tab-pix');
+    const payPanelCard = document.getElementById('pay-panel-card');
+    const payPanelPix = document.getElementById('pay-panel-pix');
+
+    function switchPayTab(mode) {
+      const isCard = mode === 'card';
+      payTabCard.setAttribute('aria-selected', String(isCard));
+      payTabPix.setAttribute('aria-selected', String(!isCard));
+      const act = ['bg-light-surface-container-high', 'dark:bg-dark-surface-container-high', 'text-light-primary', 'dark:text-dark-primary'];
+      if (isCard) {
+        payTabCard.classList.add(...act);
+        payTabPix.classList.remove(...act);
+        payPanelCard.hidden = false;
+        payPanelCard.classList.remove('hidden');
+        payPanelCard.classList.add('flex');
+        payPanelPix.hidden = true;
+        payPanelPix.classList.add('hidden');
+        payPanelPix.classList.remove('flex');
+      } else {
+        payTabPix.classList.add(...act);
+        payTabCard.classList.remove(...act);
+        payPanelPix.hidden = false;
+        payPanelPix.classList.remove('hidden');
+        payPanelPix.classList.add('flex');
+        payPanelCard.hidden = true;
+        payPanelCard.classList.add('hidden');
+        payPanelCard.classList.remove('flex');
+      }
+    }
+    payTabCard.addEventListener('click', () => switchPayTab('card'));
+    payTabPix.addEventListener('click', () => switchPayTab('pix'));
+
+    // Quantity Stepper
+    document.getElementById('qty-dec').addEventListener('click', () => {
+      if (quantity > 1) {
+        quantity -= 1;
+        updateCheckoutSummary();
+      }
+    });
+    document.getElementById('qty-inc').addEventListener('click', () => {
+      if (quantity < 6) {
+        quantity += 1;
+        updateCheckoutSummary();
+      }
+    });
+
+    // Event & User change listeners
+    document.getElementById('eventSelect').addEventListener('change', () => {
+      selectedSectorCode = '';
+      refreshAll();
+    });
+
+    document.getElementById('userSelect').addEventListener('change', () => {
+      applyUserProfile();
+      document.getElementById('checkout-confirmed-box').classList.add('hidden');
+      refreshAll();
+    });
+
+    document.getElementById('cardInput').addEventListener('input', (e) => {
+      document.getElementById('card-hash-preview').textContent = `Hash: ${e.target.value}`;
+    });
+
+    function applyUserProfile() {
+      const uid = document.getElementById('userSelect').value;
+      const profile = USER_PROFILES[uid] || USER_PROFILES['usr-victor'];
       document.getElementById('deviceInput').value = profile.device;
       document.getElementById('cardInput').value = profile.card;
-      document.getElementById('userHint').textContent = profile.hint;
-      refreshAll();
+      document.getElementById('card-hash-preview').textContent = `Hash: ${profile.card}`;
+      document.getElementById('user-persona-hint').textContent = profile.hint;
     }
 
-    function selectSector(codigo) {
-      document.getElementById('sectorSelect').value = codigo;
-      document.querySelectorAll('.sector-card').forEach(card => {
-        card.classList.toggle('selected', card.dataset.codigo === codigo);
-      });
-      updatePricePreview();
-    }
-
-    function updatePricePreview() {
+    function getSelectedEvent() {
       const evtId = document.getElementById('eventSelect').value;
-      const secCode = document.getElementById('sectorSelect').value;
-      const qty = Math.max(1, Number(document.getElementById('qtyInput').value) || 1);
-      const evt = eventsCache.find(e => e._id === evtId);
-      const sec = evt?.setores.find(s => s.codigo === secCode);
-      const total = sec ? sec.preco * qty : 0;
-      document.getElementById('pricePreview').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+      return eventsCache.find(e => e._id === evtId) || eventsCache[0] || null;
+    }
+
+    function getSelectedSector() {
+      const evt = getSelectedEvent();
+      if (!evt || !evt.setores.length) return null;
+      return evt.setores.find(s => s.codigo === selectedSectorCode) || evt.setores[0];
+    }
+
+    function updateCheckoutSummary() {
+      const sec = getSelectedSector();
+      const uid = document.getElementById('userSelect').value;
+      document.getElementById('qty-value').textContent = String(quantity);
+
+      if (!sec) return;
+      const qtyToUse = activeReservation ? activeReservation.qtd : quantity;
+      const secObj = activeReservation
+        ? (getSelectedEvent()?.setores.find(s => s.codigo === activeReservation.setor) || sec)
+        : sec;
+
+      const subtotal = secObj.preco * qtyToUse;
+      document.getElementById('summary-item-label').textContent = `${qtyToUse} × ${secObj.nome}`;
+      document.getElementById('summary-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+      document.getElementById('summary-total').textContent = `R$ ${subtotal.toFixed(2)}`;
+      document.getElementById('confirm-btn-label').textContent = activeReservation
+        ? `Confirm & Pay R$ ${subtotal.toFixed(2)}`
+        : `Reserve & Pay R$ ${subtotal.toFixed(2)}`;
+      document.getElementById('checkout-redis-key').textContent = activeReservation
+        ? `Key: reserva:${uid} · Status: reservado (${activeReservation.qtd}x ${activeReservation.setor})`
+        : `Key: reserva:${uid} · Status: pronto para reservar`;
     }
 
     async function loadEvents() {
       eventsCache = await api('/api/events');
       const sel = document.getElementById('eventSelect');
       const current = sel.value;
-      sel.innerHTML = eventsCache.map(e => `<option value="${e._id}">${e.nome}</option>`).join('');
+      sel.innerHTML = eventsCache.map(e => `<option value="${e._id}" class="bg-dark-surface text-dark-on-surface">${e.nome}</option>`).join('');
       if (current && eventsCache.some(e => e._id === current)) sel.value = current;
 
-      const selected = eventsCache.find(e => e._id === sel.value) || eventsCache[0];
-      if (!selected) return;
+      const evt = getSelectedEvent();
+      if (!evt) return;
 
-      const dateStr = selected.data ? new Date(selected.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
-      const metaTags = [];
-      if (selected.local) metaTags.push(`<span>📍 ${selected.local}</span>`);
-      if (dateStr) metaTags.push(`<span>📅 ${dateStr}</span>`);
-      if (selected.categoria) metaTags.push(`<span class="chip">${selected.categoria}</span>`);
-      if (selected.metadados?.lote_atual) metaTags.push(`<span class="chip">${selected.metadados.lote_atual}</span>`);
-      document.getElementById('eventMeta').innerHTML = metaTags.join('');
+      document.getElementById('event-title-heading').textContent = evt.nome;
+      const dateFormatted = evt.data ? new Date(evt.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+      const lote = evt.metadados?.lote_atual ? ` · ${evt.metadados.lote_atual}` : '';
+      document.getElementById('event-meta-line').textContent = `${dateFormatted} · ${evt.local}${lote}`;
 
-      const sectorSel = document.getElementById('sectorSelect');
-      const curSec = sectorSel.value;
-      sectorSel.innerHTML = selected.setores.map(s => `<option value="${s.codigo}">${s.nome}</option>`).join('');
-      if (curSec && selected.setores.some(s => s.codigo === curSec)) sectorSel.value = curSec;
+      if (!selectedSectorCode || !evt.setores.some(s => s.codigo === selectedSectorCode)) {
+        selectedSectorCode = evt.setores[0]?.codigo || '';
+      }
 
-      const activeSec = sectorSel.value;
-      document.getElementById('sectorsList').innerHTML = selected.setores.map(s => {
-        const pct = s.capacidade > 0 ? Math.round((s.disponivel / s.capacidade) * 100) : 0;
-        const isSel = s.codigo === activeSec;
+      const totalRemaining = evt.setores.reduce((acc, s) => acc + (Number(s.disponivel) || 0), 0);
+      const totalCap = evt.setores.reduce((acc, s) => acc + (Number(s.capacidade) || 0), 0);
+      document.getElementById('total-remaining-label').textContent = `${totalRemaining.toLocaleString('pt-BR')} / ${totalCap.toLocaleString('pt-BR')} seats open`;
+
+      const grid = document.getElementById('sector-grid');
+      grid.innerHTML = evt.setores.map(s => {
+        const isSel = s.codigo === selectedSectorCode;
+        const borderCls = isSel
+          ? 'border-2 border-light-primary dark:border-dark-primary'
+          : 'border border-light-outline-variant dark:border-dark-outline-variant hover:border-light-primary dark:hover:border-dark-primary';
+        const stockColor = s.disponivel < 600 ? 'text-accent-orange' : 'text-accent-teal';
         return `
-          <div class="sector-card ${isSel ? 'selected' : ''}" data-codigo="${s.codigo}" onclick="selectSector('${s.codigo}')">
-            <div class="sector-top">
-              <span class="sector-name">${isSel ? '🔘 ' : '⚪ '}${s.nome}</span>
-              <span class="sector-price">R$ ${s.preco.toFixed(2).replace('.', ',')}</span>
-            </div>
-            <div class="sector-bar-wrap"><div class="sector-bar" style="width:${pct}%"></div></div>
-            <div class="sector-foot">
-              <span>Estoque Redis: <strong>${s.disponivel.toLocaleString('pt-BR')}</strong> / ${s.capacidade.toLocaleString('pt-BR')}</span>
-              <span>${isSel ? 'Setor selecionado' : 'Clique para escolher'}</span>
+          <div role="button" tabindex="0" onclick="selectSectorCard('${s.codigo}')" class="sector-card p-gutter-md rounded bg-light-surface-container-low dark:bg-dark-surface-container-low ${borderCls} transition-colors cursor-pointer flex flex-col justify-between gap-gutter-sm">
+            <header class="flex items-start justify-between gap-gutter-sm">
+              <div class="flex flex-col gap-gutter-xs">
+                <h3 class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">${s.nome}</h3>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">estoque:${evt._id}:${s.codigo}</span>
+              </div>
+              <span class="font-mono text-title-md ${isSel ? 'text-light-primary dark:text-dark-primary' : 'text-light-on-surface dark:text-dark-on-surface'} tabular-nums">R$ ${s.preco.toFixed(0)}</span>
+            </header>
+            <div class="flex items-center justify-between gap-gutter-sm pt-gutter-sm border-t border-light-outline-variant dark:border-dark-outline-variant">
+              <span class="font-mono text-mono-sm tabular-nums ${stockColor}">${s.disponivel.toLocaleString('pt-BR')} seats left</span>
+              <span class="font-body text-label-sm ${isSel ? 'text-light-primary dark:text-dark-primary' : 'text-light-outline dark:text-dark-outline'}">${isSel ? '✓ Selected' : 'Select'}</span>
             </div>
           </div>
         `;
       }).join('');
 
-      updatePricePreview();
+      updateCheckoutSummary();
     }
 
-    function renderLogs() {
-      const filtered = currentLogFilter === 'ALL'
-        ? logsCache
-        : logsCache.filter(l => l.db.toUpperCase().includes(currentLogFilter));
+    function selectSectorCard(codigo) {
+      selectedSectorCode = codigo;
+      loadEvents();
+    }
 
-      document.getElementById('logsList').innerHTML = filtered.length
-        ? filtered.map(l => `<div class="item"><span><strong>[${l.db}]</strong> ${l.cmd}</span><span style="color:var(--muted)">${l.ts.slice(11, 19)}</span></div>`).join('')
-        : '<div class="empty">Nenhum comando registrado para este filtro.</div>';
+    function isUserMember(member, userId) {
+      return member === userId || member === `usuario:${userId}`;
+    }
+
+    function formatMember(member) {
+      const clean = String(member).replace(/^usuario:/, '');
+      return USER_PROFILES[clean] ? `${USER_PROFILES[clean].name} (${clean})` : clean;
     }
 
     async function refreshAll() {
       await loadEvents();
-      const eventoId = document.getElementById('eventSelect').value;
+      const evt = getSelectedEvent();
+      if (!evt) return;
+      const eventoId = evt._id;
       const activeUser = document.getElementById('userSelect').value;
-      const activeUserName = USER_NAMES[activeUser] || activeUser;
-      if (!eventoId) return;
 
       const [queue, reservations, history, graph, tickets, logs] = await Promise.all([
         api(`/api/queue/${eventoId}`),
@@ -756,205 +956,356 @@
         api('/api/logs'),
       ]);
 
-      // 1. FILA VIRTUAL (Corrigido: compara usuario:usr-victor e destaca usuario mesmo se estiver na posicao #120)
-      const myQueueEntry = queue.find(q => isMemberUser(q.member, activeUser));
-      const banner = document.getElementById('queueStatusBanner');
-      document.getElementById('queueListLabel').textContent = `Pessoas na fila agora (${queue.length})`;
+      // 1. Virtual Queue Banner & Ranking List (Fixed prefix matching usuario:usr-victor)
+      const myQueueEntry = queue.find(q => isUserMember(q.member, activeUser));
+      const rankEl = document.getElementById('banner-queue-rank');
+      const rankSubEl = document.getElementById('banner-queue-sub');
+      const statusTextEl = document.getElementById('queue-status-text');
+      document.getElementById('queue-count-badge').textContent = `${queue.length} in queue`;
 
       if (myQueueEntry) {
-        banner.className = 'status-box in-queue';
-        banner.innerHTML = `✅ <strong>${activeUserName}</strong> está na fila! Sua posição atual: <strong>#${myQueueEntry.position}</strong> de ${queue.length}`;
+        const posStr = String(myQueueEntry.position).padStart(2, '0');
+        rankEl.textContent = `#${posStr} / ${queue.length}`;
+        rankSubEl.textContent = `ZRANK = ${myQueueEntry.position - 1} (${activeUser})`;
+        statusTextEl.textContent = `In Queue (#${myQueueEntry.position})`;
       } else {
-        banner.className = 'status-box not-in-queue';
-        banner.innerHTML = `ℹ️ <strong>${activeUserName}</strong> não está na fila (${queue.length} aguardando). Clique em <strong>Entrar na Fila</strong>.`;
+        rankEl.textContent = `-- / ${queue.length}`;
+        rankSubEl.textContent = `${activeUser} fora da fila`;
+        statusTextEl.textContent = queue.length > 0 ? 'Queue Active' : 'Queue Ready';
       }
 
+      const queueBox = document.getElementById('queue-list-box');
       if (!queue.length) {
-        document.getElementById('queueList').innerHTML = '<div class="empty">Fila vazia. Clique em "Entrar na Fila" ou "Simular Pico".</div>';
+        queueBox.innerHTML = `<div class="py-gutter-md text-center text-light-on-surface-variant dark:text-dark-on-surface-variant">Fila vazia. Clique em "Entrar na Fila" ou "Simulate Spike".</div>`;
       } else {
-        const topSlice = queue.slice(0, 15);
-        const myInTop = topSlice.some(q => isMemberUser(q.member, activeUser));
-        let html = '';
-
-        // Se o usuário estiver na posição > 15 (ex: #122), fixa ele no topo da lista para ficar visível!
-        if (myQueueEntry && !myInTop) {
-          html += `<div class="item me"><span>👉 <strong>#${myQueueEntry.position} · ${formatMemberName(myQueueEntry.member)} — VOCÊ</strong></span><span class="mono">chegada: ${new Date(myQueueEntry.score).toLocaleTimeString('pt-BR')}</span></div>`;
+        const top15 = queue.slice(0, 15);
+        const meInTop15 = top15.some(q => isUserMember(q.member, activeUser));
+        let qHtml = '';
+        if (myQueueEntry && !meInTop15) {
+          qHtml += `
+            <div class="py-gutter-xs px-gutter-sm bg-dark-primary/15 border border-dark-primary rounded flex items-center justify-between text-accent-cyan mb-1">
+              <span>👉 #${myQueueEntry.position} · ${formatMember(myQueueEntry.member)} (VOCÊ)</span>
+              <span>score: ${myQueueEntry.score}</span>
+            </div>
+          `;
         }
-
-        html += topSlice.map(q => {
-          const isMe = isMemberUser(q.member, activeUser);
-          return `<div class="item ${isMe ? 'me' : ''}"><span><strong>#${q.position}</strong> · ${formatMemberName(q.member)}${isMe ? ' — <strong>VOCÊ</strong>' : ''}</span><span class="mono">${new Date(q.score).toLocaleTimeString('pt-BR')}</span></div>`;
+        qHtml += top15.map(q => {
+          const isMe = isUserMember(q.member, activeUser);
+          return `
+            <div class="py-gutter-xs px-gutter-xs flex items-center justify-between ${isMe ? 'bg-dark-primary/15 text-accent-cyan font-semibold rounded px-gutter-sm' : 'text-light-on-surface-variant dark:text-dark-on-surface-variant'}">
+              <span>#${q.position} · ${formatMember(q.member)}${isMe ? ' (VOCÊ)' : ''}</span>
+              <span>${new Date(q.score).toLocaleTimeString('pt-BR')}</span>
+            </div>
+          `;
         }).join('');
-
-        if (queue.length > 15) {
-          html += `<div class="empty" style="padding:6px;">... e mais ${queue.length - 15} pessoa(s) na fila</div>`;
-        }
-        document.getElementById('queueList').innerHTML = html;
+        queueBox.innerHTML = qHtml;
       }
 
-      // 2. RESERVA & CHECKOUT
-      document.getElementById('emptyResUser').textContent = `${activeUserName} (${activeUser})`;
+      // 2. Active Reservation & TTL
       const myRes = reservations.find(r => r.key === `reserva:${activeUser}`);
-
-      document.getElementById('noReservationBox').style.display = myRes ? 'none' : 'block';
-      document.getElementById('activeReservationBox').style.display = myRes ? 'flex' : 'none';
+      activeReservation = myRes || null;
+      const expireBtn = document.getElementById('btn-expire-ttl');
 
       if (myRes) {
-        activeTtlSeconds = myRes.ttl;
-        document.getElementById('resUserLabel').textContent = activeUserName;
-        document.getElementById('resDetails').innerHTML = `Setor: <strong>${myRes.setor}</strong> · Quantidade: <strong>${myRes.qtd} ingresso(s)</strong>`;
-        document.getElementById('resTtlBadge').textContent = `⏱ Expira em ${myRes.ttl}s`;
+        liveTtlSeconds = myRes.ttl;
+        document.getElementById('ttl-countdown').textContent = formatMMSS(myRes.ttl);
+        document.getElementById('banner-ttl-sub').textContent = `EXPIRE reserva:${activeUser} (${myRes.qtd}x ${myRes.setor})`;
+        expireBtn.classList.remove('hidden');
+        expireBtn.classList.add('inline-flex');
       } else {
-        activeTtlSeconds = null;
+        liveTtlSeconds = null;
+        document.getElementById('ttl-countdown').textContent = '10:00';
+        document.getElementById('banner-ttl-sub').textContent = `Sem reserva ativa (${activeUser})`;
+        expireBtn.classList.add('hidden');
+        expireBtn.classList.remove('inline-flex');
+      }
+      updateCheckoutSummary();
+
+      // 3. Issued Passes & Transfer (MongoDB)
+      document.getElementById('tickets-count-badge').textContent = `${tickets.length} passes`;
+      const ticketsList = document.getElementById('tickets-list');
+      if (!tickets.length) {
+        ticketsList.innerHTML = `<div class="py-gutter-md text-center font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Nenhum ingresso emitido ainda neste evento.</div>`;
+      } else {
+        ticketsList.innerHTML = tickets.map(t => {
+          const targets = TRANSFER_TARGETS
+            .filter(u => u.id !== t.titular_id)
+            .map(u => `<option value="${u.id}" class="bg-dark-surface text-dark-on-surface">${u.label}</option>`)
+            .join('');
+          return `
+            <div class="p-gutter-sm rounded bg-light-surface-container-lowest dark:bg-dark-surface-container-lowest border border-light-outline-variant dark:border-dark-outline-variant flex flex-wrap items-center justify-between gap-gutter-sm">
+              <div class="flex flex-col">
+                <div class="flex items-center gap-gutter-sm">
+                  <span class="font-mono text-mono-sm text-accent-cyan">${t._id}</span>
+                  <span class="font-title text-body-md text-light-on-surface dark:text-dark-on-surface">${t.setor}</span>
+                  <span class="px-1.5 py-0.5 rounded bg-dark-surface-container-high font-mono text-mono-sm text-accent-teal">${t.qr_code}</span>
+                </div>
+                <span class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Titular: ${formatMember(t.titular_id)} · R$ ${Number(t.valor || 0).toFixed(2)}</span>
+              </div>
+              <div class="flex items-center gap-gutter-xs">
+                <select id="transfer-to-${t._id}" aria-label="Transferir para" class="rounded bg-dark-surface-container border border-dark-outline-variant py-1 pl-2 pr-6 font-mono text-mono-sm text-dark-on-surface">${targets}</select>
+                <button type="button" onclick="transferTicket('${t._id}', '${t.titular_id}')" class="px-gutter-sm py-1 rounded bg-dark-surface-container-high border border-dark-outline-variant font-body text-label-sm text-accent-cyan hover:border-accent-cyan">Transferir</button>
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
-      const otherRes = reservations.filter(r => r.key !== `reserva:${activeUser}`);
-      document.getElementById('otherReservationsWrap').style.display = otherRes.length ? 'block' : 'none';
-      document.getElementById('reservationsList').innerHTML = otherRes.map(r => {
-        const uid = r.key.replace('reserva:', '');
-        return `<div class="item"><span><strong>${USER_NAMES[uid] || uid}</strong> (${r.qtd}x ${r.setor})</span><span>TTL: ${r.ttl}s <button class="danger sm" style="margin-left:6px;" onclick="expireRes('${uid}')">Expirar</button></span></div>`;
-      }).join('');
+      // 4. Professor Evaluation: Neo4j Fraud Rings & Graph + Cassandra History
+      document.getElementById('kpi-fraud-count').textContent = `${graph.alerts.length} alerts`;
+      document.getElementById('kpi-purchases-count').textContent = `${history.purchases.length} writes`;
+      document.getElementById('graph-nodes-edges-count').textContent = `${graph.snapshot.nodes.length} nodes · ${graph.snapshot.edges.length} edges`;
 
-      // 3. INGRESSOS EMITIDOS (MongoDB)
-      const ticketsContainer = document.getElementById('ticketsContainer');
-      ticketsContainer.innerHTML = tickets.length
-        ? tickets.map(t => {
-            const options = TRANSFER_TARGETS
-              .filter(u => u.id !== t.titular_id)
-              .map(u => `<option value="${u.id}">${u.label}</option>`)
-              .join('');
-            const ownerLabel = USER_NAMES[t.titular_id] ? `${USER_NAMES[t.titular_id]} (${t.titular_id})` : t.titular_id;
-            const transfersCount = (t.historico_transferencias || []).length;
-            return `
-              <div class="ticket-item">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                  <strong>🎟️ ${t._id} · Setor: ${t.setor}</strong>
-                  <span class="ticket-qr">QR: ${t.qr_code}</span>
-                </div>
-                <div style="font-size:0.8rem; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap;">
-                  <span>Titular atual: <strong style="color:var(--text);">${ownerLabel}</strong></span>
-                  <span>R$ ${Number(t.valor || 0).toFixed(2).replace('.', ',')} ${transfersCount ? `· (${transfersCount} transf.)` : ''}</span>
-                </div>
-                <div class="row" style="margin-top:2px;">
-                  <select id="transfer-to-${t._id}" style="padding:5px 8px; font-size:0.79rem;">${options}</select>
-                  <button class="secondary sm" style="flex:0 0 auto;" onclick="transferTicket('${t._id}', '${t.titular_id}')">Transferir Titularidade</button>
-                </div>
-              </div>
-            `;
-          }).join('')
-        : '<div class="empty">Nenhum ingresso emitido ainda. Reserve no Passo 2 e confirme no Passo 3!</div>';
+      const fraudList = document.getElementById('fraud-alerts-list');
+      fraudList.innerHTML = graph.alerts.length
+        ? graph.alerts.map(a => `
+            <div class="p-gutter-sm rounded bg-dark-error-container/35 border border-dark-error text-dark-on-error-container font-mono text-mono-sm">
+              ⚠ <strong>${a.tipo}:</strong> <code>${a.recurso}</code> compartilhado por [${a.usuarios.join(', ')}] — ${a.risco}
+            </div>
+          `).join('')
+        : `<div class="font-mono text-mono-sm text-accent-teal">✓ Nenhuma anomalia detectada no grafo.</div>`;
 
-      // 4. ANTIFRAUDE & GRAFO (Neo4j)
-      document.getElementById('fraudAlerts').innerHTML = graph.alerts.length
-        ? graph.alerts.map(a => `<div class="alert">🚨 <strong>${a.tipo}:</strong> <code>${a.recurso}</code> usado pelas contas <strong>[${a.usuarios.join(', ')}]</strong> — ${a.risco}</div>`).join('')
-        : '<div class="empty">Nenhuma anomalia detectada no grafo para este evento.</div>';
+      document.getElementById('graph-edges-list').innerHTML = graph.snapshot.edges.length
+        ? graph.snapshot.edges.slice().reverse().map(e => `<div>${e.from} ──[<span class="text-accent-purple">${e.label}</span>]──▶ ${e.to}</div>`).join('')
+        : `<div>Sem arestas no grafo.</div>`;
 
-      document.getElementById('graphStatsLabel').textContent = `Conexões no Grafo (${graph.snapshot.nodes.length} nós · ${graph.snapshot.edges.length} arestas)`;
-      document.getElementById('graphSummary').innerHTML = graph.snapshot.edges.length
-        ? graph.snapshot.edges.slice().reverse().map(e => `<div class="item"><span>${e.from} ──[<strong>${e.label}</strong>]──▶ ${e.to}</span></div>`).join('')
-        : '<div class="empty">Sem conexões registradas.</div>';
+      const cassList = document.getElementById('cassandra-purchases-list');
+      cassList.innerHTML = history.purchases.length
+        ? history.purchases.map(p => `
+            <div class="py-1.5 flex items-center justify-between gap-gutter-sm">
+              <span><strong class="text-accent-teal">${p.usuario_id}</strong> · ${p.quantidade}x ${p.setor}</span>
+              <span class="text-light-on-surface-variant dark:text-dark-on-surface-variant">R$ ${Number(p.valor_total).toFixed(2)} · ${new Date(p.comprado_em).toLocaleTimeString('pt-BR')}</span>
+            </div>
+          `).join('')
+        : `<div class="py-gutter-md text-center text-light-on-surface-variant dark:text-dark-on-surface-variant">Sem compras na partição deste evento.</div>`;
 
-      // 5. HISTÓRICO & AUDITORIA (Cassandra - campos corrigidos: tipo, detalhe, ocorrido_em)
-      document.getElementById('historyList').innerHTML = history.purchases.length
-        ? history.purchases.map(p => {
-            const uName = USER_NAMES[p.usuario_id] || p.usuario_id;
-            return `<div class="item"><span><strong>${uName}</strong> · ${p.quantidade}x ${p.setor}</span><span class="mono">R$ ${Number(p.valor_total).toFixed(2)} · ${new Date(p.comprado_em).toLocaleTimeString('pt-BR')}</span></div>`;
-          }).join('')
-        : '<div class="empty">Sem compras registradas neste evento.</div>';
-
-      document.getElementById('auditList').innerHTML = history.audit.length
-        ? history.audit.map(a => {
-            const tipo = a.tipo || a.acao || 'LOG';
-            const det = a.detalhe || a.detalhes || '';
-            const ts = a.ocorrido_em || a.registrado_em;
-            const timeStr = ts ? new Date(ts).toLocaleTimeString('pt-BR') : '';
-            return `<div class="item"><span><strong>[${tipo}]</strong> ${det}</span><span class="mono">${timeStr}</span></div>`;
-          }).join('')
-        : '<div class="empty">Sem registros de auditoria.</div>';
-
-      // 6. INSPECTOR NOSQL
+      // 5. Logs & Trace Inspector
       logsCache = logs;
-      renderLogs();
+      document.getElementById('nav-log-badge').textContent = String(logs.length);
+      renderLogStream();
     }
 
+    function detectEngineTag(dbName) {
+      const upper = String(dbName).toUpperCase();
+      if (upper.includes('REDIS')) return 'REDIS';
+      if (upper.includes('MONGO')) return 'MONGO';
+      if (upper.includes('CASSANDRA')) return 'CASSANDRA';
+      if (upper.includes('NEO4J')) return 'NEO4J';
+      return 'API';
+    }
+
+    function engineColor(engine) {
+      if (engine === 'REDIS') return 'text-accent-orange';
+      if (engine === 'CASSANDRA') return 'text-accent-teal';
+      if (engine === 'NEO4J') return 'text-accent-purple';
+      return 'text-accent-cyan';
+    }
+
+    function buildTraceMeta(entry) {
+      const eng = detectEngineTag(entry.db);
+      if (eng === 'REDIS') {
+        return {
+          node: 'redis-shard-01 (In-Memory Master)',
+          cap: 'AP · BASE (Volatile / Atomic)',
+          note: 'Operação O(1) ou O(log N) em memória: fila virtual (ZSET), reserva efêmera (HASH + EXPIRE) ou decremento atômico de estoque (DECRBY) sem lock de linha.',
+        };
+      }
+      if (eng === 'CASSANDRA') {
+        return {
+          node: 'cassandra-ring-node-02 (Partitionevento_id)',
+          cap: 'AP / Tunable QUORUM (Wide-Column)',
+          note: 'Modelagem Query-First: escrita/leitura direcionada pela Partition Key (evento_id) e ordenada pela Clustering Column (comprado_em DESC) sem joins.',
+        };
+      }
+      if (eng === 'NEO4J') {
+        return {
+          node: 'neo4j-graph-engine (Bolt)',
+          cap: 'Graph Traversal (Index-Free Adjacency)',
+          note: 'Conecta Usuário, Dispositivo, Cartão e Evento para detectar cambismo (múltiplas contas compartilhando mesmo recurso) e rastrear transferências.',
+        };
+      }
+      return {
+        node: 'mongodb-replica-set (Primary)',
+        cap: 'CP · Document Store (BSON/JSON)',
+        note: 'Armazena documentos semiestruturados de eventos (setores e metadados variáveis) e ingressos digitais com histórico embutido de transferências.',
+      };
+    }
+
+    function selectTraceByIndex(idx, filteredList) {
+      const item = filteredList[idx];
+      if (!item) return;
+      selectedLogIndex = idx;
+      const eng = detectEngineTag(item.db);
+      const meta = buildTraceMeta(item);
+
+      document.getElementById('trace-id-label').textContent = `ts_${item.ts.slice(11, 23)}`;
+      const badge = document.getElementById('trace-engine-badge');
+      badge.textContent = eng;
+      badge.className = `px-gutter-sm py-gutter-xs rounded-sm bg-light-surface-container-high dark:bg-dark-surface-container-high font-mono text-mono-sm ${engineColor(eng)}`;
+      document.getElementById('trace-node').textContent = meta.node;
+      document.getElementById('trace-cap').textContent = meta.cap;
+      document.getElementById('trace-payload').textContent = item.cmd;
+      document.getElementById('trace-note').textContent = meta.note;
+    }
+
+    function renderLogStream() {
+      const tbody = document.getElementById('stream-tbody');
+      const q = logSearchTerm.trim().toLowerCase();
+      const filtered = logsCache.filter(row => {
+        const eng = detectEngineTag(row.db);
+        const matchEng = activeEngineFilter === 'ALL' || eng === activeEngineFilter;
+        const matchSearch = !q || row.cmd.toLowerCase().includes(q) || row.db.toLowerCase().includes(q);
+        return matchEng && matchSearch;
+      });
+
+      document.getElementById('log-count-label').textContent = `Showing ${filtered.length} events`;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="px-gutter-md py-gutter-lg text-center font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-on-surface-variant">Nenhum comando encontrado para este filtro.</td></tr>`;
+        return;
+      }
+
+      if (selectedLogIndex >= filtered.length) selectedLogIndex = 0;
+      selectTraceByIndex(selectedLogIndex, filtered);
+
+      tbody.innerHTML = filtered.map((row, idx) => {
+        const eng = detectEngineTag(row.db);
+        const isSel = idx === selectedLogIndex;
+        const rowBg = isSel
+          ? 'bg-light-surface-container-high dark:bg-dark-surface-container-high'
+          : 'hover:bg-light-surface-container-high dark:hover:bg-dark-surface-container-high';
+        return `
+          <tr data-idx="${idx}" class="${rowBg} cursor-pointer transition-colors">
+            <td class="px-gutter-md py-gutter-sm font-mono text-mono-sm tabular-nums text-light-on-surface-variant dark:text-dark-on-surface-variant">${row.ts.slice(11, 23)}</td>
+            <td class="px-gutter-md py-gutter-sm font-mono text-mono-sm ${engineColor(eng)}">${eng}</td>
+            <td class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface truncate max-w-md">${row.cmd}</td>
+            <td class="px-gutter-md py-gutter-sm text-right font-mono text-mono-sm text-accent-teal">200 OK</td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.querySelectorAll('tr[data-idx]').forEach(tr => {
+        tr.addEventListener('click', () => {
+          selectedLogIndex = Number(tr.dataset.idx);
+          renderLogStream();
+        });
+      });
+    }
+
+    // Engine Filter Tabs in Professor Evaluation
+    document.querySelectorAll('.engine-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeEngineFilter = btn.dataset.engine;
+        selectedLogIndex = 0;
+        document.querySelectorAll('.engine-tab').forEach(b => {
+          b.classList.remove('bg-light-surface-container-high', 'dark:bg-dark-surface-container-high', 'text-light-primary', 'dark:text-dark-primary');
+          b.classList.add('text-light-on-surface-variant', 'dark:text-dark-on-surface-variant');
+        });
+        btn.classList.add('bg-light-surface-container-high', 'dark:bg-dark-surface-container-high', 'text-light-primary', 'dark:text-dark-primary');
+        btn.classList.remove('text-light-on-surface-variant', 'dark:text-dark-on-surface-variant');
+        renderLogStream();
+      });
+    });
+
+    document.getElementById('log-search').addEventListener('input', (e) => {
+      logSearchTerm = e.target.value;
+      selectedLogIndex = 0;
+      renderLogStream();
+    });
+
+    // Backend Actions
     async function enterQueue() {
       try {
-        const res = await api('/api/queue/enter', 'POST', {
-          eventoId: document.getElementById('eventSelect').value,
-          usuarioId: document.getElementById('userSelect').value,
-        });
-        showToast(`Você entrou na fila na posição #${res.position}!`, 'success');
+        const eventoId = document.getElementById('eventSelect').value;
+        const usuarioId = document.getElementById('userSelect').value;
+        const res = await api('/api/queue/enter', 'POST', { eventoId, usuarioId });
+        showToast(`Sessão adicionada na fila virtual (ZADD) · Posição #${res.position}`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
     async function burstQueue() {
       try {
-        const res = await api('/api/queue/burst', 'POST', {
-          eventoId: document.getElementById('eventSelect').value,
-          count: 15,
-        });
-        showToast(`Pico simulado! +15 fãs adicionados (${res.totalInQueue} na fila).`, 'success');
+        const eventoId = document.getElementById('eventSelect').value;
+        const res = await api('/api/queue/burst', 'POST', { eventoId, count: 15 });
+        throughput += 840;
+        const formatted = `${throughput.toLocaleString('en-US')} req/s`;
+        document.getElementById('header-throughput').textContent = formatted;
+        document.getElementById('kpi-throughput').textContent = formatted;
+        showToast(`Pico simulado (+15 clientes) · Total na fila: ${res.totalInQueue}`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
     async function createReservation() {
       try {
-        const userId = document.getElementById('userSelect').value;
+        const eventoId = document.getElementById('eventSelect').value;
+        const usuarioId = document.getElementById('userSelect').value;
+        const sec = getSelectedSector();
+        if (!sec) return;
         await api('/api/reservations', 'POST', {
-          eventoId: document.getElementById('eventSelect').value,
-          usuarioId: userId,
-          setor: document.getElementById('sectorSelect').value,
-          qtd: Number(document.getElementById('qtyInput').value),
+          eventoId,
+          usuarioId,
+          setor: sec.codigo,
+          qtd: quantity,
         });
-        showToast('Ingressos reservados no Redis (TTL 10 min)! Agora confirme no Passo 3.', 'success');
+        showToast(`Estoque decrementado (DECRBY) e reserva criada com TTL de 600s!`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
     async function expireActiveReservation() {
-      const userId = document.getElementById('userSelect').value;
-      await expireRes(userId);
-    }
-
-    async function expireRes(userId) {
       try {
-        const res = await api(`/api/reservations/${userId}/expire`, 'POST');
-        showToast(`TTL expirado! ${res.devolvido} ingresso(s) devolvido(s) ao estoque do Redis (INCRBY).`, 'success');
+        const usuarioId = document.getElementById('userSelect').value;
+        const res = await api(`/api/reservations/${usuarioId}/expire`, 'POST');
+        showToast(`TTL expirado! Worker devolveu ${res.devolvido} ingresso(s) ao estoque no Redis (INCRBY).`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
     async function doCheckout() {
       try {
+        const eventoId = document.getElementById('eventSelect').value;
+        const usuarioId = document.getElementById('userSelect').value;
+        const sec = getSelectedSector();
+
+        // Se o usuário clicou direto em Confirm & Pay sem ter travado a reserva antes, cria a reserva automaticamente primeiro!
+        if (!activeReservation && sec) {
+          await api('/api/reservations', 'POST', {
+            eventoId,
+            usuarioId,
+            setor: sec.codigo,
+            qtd: quantity,
+          });
+        }
+
         const res = await api('/api/checkout', 'POST', {
-          usuarioId: document.getElementById('userSelect').value,
+          usuarioId,
           deviceId: document.getElementById('deviceInput').value,
           cardHash: document.getElementById('cardInput').value,
         });
-        showToast(`Compra confirmada! ${res.tickets.length} ingresso(s) emitido(s) no MongoDB, Cassandra e Neo4j.`, 'success');
+
+        document.getElementById('checkout-confirmed-box').classList.remove('hidden');
+        document.getElementById('checkout-confirmed-detail').textContent =
+          `TX: ${res.purchase.compra_id.slice(0, 8)} · ${res.tickets.length} ingresso(s) gravados no Cassandra (compras_por_evento), MongoDB (ingressos) e Neo4j.`;
+        showToast(`Checkout concluído! ${res.tickets.length} ingresso(s) persistidos nos 4 bancos NoSQL.`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
     async function transferTicket(ticketId, fromUserId) {
-      const selectEl = document.getElementById(`transfer-to-${ticketId}`);
-      const toUserId = selectEl ? selectEl.value : '';
+      const sel = document.getElementById(`transfer-to-${ticketId}`);
+      const toUserId = sel ? sel.value : '';
       if (!toUserId) return;
       try {
-        await api('/api/tickets/transfer', 'POST', {
-          ticketId,
-          fromUserId,
-          toUserId,
-        });
-        showToast(`Ingresso ${ticketId} transferido de ${fromUserId} para ${toUserId}!`, 'success');
+        await api('/api/tickets/transfer', 'POST', { ticketId, fromUserId, toUserId });
+        showToast(`Ingresso ${ticketId} transferido para ${toUserId} (MongoDB + Neo4j)!`);
         refreshAll();
-      } catch (e) { showToast(e.message, 'error'); }
+      } catch (e) { showToast(e.message, true); }
     }
 
-    onUserChange();
-    loadHealth();
+    applyUserProfile();
+    refreshAll();
   </script>
 </body>
 </html>
