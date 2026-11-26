@@ -191,16 +191,14 @@
             <select id="eventSelect" aria-label="Selecionar Evento" class="bg-transparent border-none py-0 pl-1 pr-6 font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:ring-0 cursor-pointer"></select>
           </div>
 
-          <!-- User Persona Selector -->
+          <!-- User Persona Selector + Quick Create User -->
           <div class="inline-flex items-center gap-gutter-xs px-gutter-sm py-1 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant">
             <span class="material-symbols-outlined text-body-md text-light-primary dark:text-dark-primary" aria-hidden="true">person</span>
-            <select id="userSelect" aria-label="Selecionar Usuário" class="bg-transparent border-none py-0 pl-1 pr-6 font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:ring-0 cursor-pointer">
-              <option value="usr-victor" class="bg-dark-surface text-dark-on-surface">usuario:usr-victor (Victor)</option>
-              <option value="usr-leo" class="bg-dark-surface text-dark-on-surface">usuario:usr-leo (Leonardo)</option>
-              <option value="usr-ana" class="bg-dark-surface text-dark-on-surface">usuario:usr-ana (Ana Clara)</option>
-              <option value="usr-cambista-1" class="bg-dark-surface text-dark-on-surface">usuario:usr-cambista-1 (Suspeito A)</option>
-              <option value="usr-cambista-2" class="bg-dark-surface text-dark-on-surface">usuario:usr-cambista-2 (Suspeito B)</option>
-            </select>
+            <select id="userSelect" aria-label="Selecionar Usuário" class="bg-transparent border-none py-0 pl-1 pr-6 font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface focus:ring-0 cursor-pointer"></select>
+            <button type="button" onclick="createNewUserPrompt()" title="Cadastrar novo usuário no MongoDB" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-dark-surface-container-high border border-dark-outline-variant font-mono text-mono-sm text-accent-cyan hover:border-accent-cyan transition-colors">
+              <span class="material-symbols-outlined text-body-sm">person_add</span>
+              <span>+User</span>
+            </button>
           </div>
         </div>
 
@@ -667,6 +665,7 @@
 
   <script>
     let eventsCache = [];
+    let usersCache = [];
     let logsCache = [];
     let activeEngineFilter = 'ALL';
     let logSearchTerm = '';
@@ -678,20 +677,67 @@
     let throughput = 15420;
     let toastTimer = null;
 
-    const USER_PROFILES = {
-      'usr-victor': { name: 'Victor Zainote', device: 'dev-notebook-victor', card: 'card-hash-5555', hint: 'Comprador legítimo · Dispositivo e cartão exclusivos.' },
-      'usr-leo': { name: 'Leonardo Soares', device: 'dev-iphone-leo', card: 'card-hash-1010', hint: 'Comprador legítimo · Possui compra histórica inicial.' },
-      'usr-ana': { name: 'Ana Clara', device: 'dev-android-ana', card: 'card-hash-2020', hint: 'Compradora legítima · Ideal para receber transferência.' },
-      'usr-cambista-1': { name: 'Conta Suspeita A', device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Simulação de cambista: compartilha device/cartão com Suspeito B.' },
-      'usr-cambista-2': { name: 'Conta Suspeita B', device: 'dev-bot-farm-99', card: 'card-hash-9999', hint: '⚠ Simulação de cambista: compartilha device/cartão com Suspeito A.' },
-    };
+    const USER_PROFILES = {};
+    let TRANSFER_TARGETS = [];
 
-    const TRANSFER_TARGETS = [
-      { id: 'usr-ana', label: 'Ana Clara (usr-ana)' },
-      { id: 'usr-leo', label: 'Leonardo Soares (usr-leo)' },
-      { id: 'usr-victor', label: 'Victor Zainote (usr-victor)' },
-      { id: 'usr-cambista-1', label: 'Conta Suspeita A (usr-cambista-1)' },
-    ];
+    async function loadUsers() {
+      usersCache = await api('/api/users');
+      const sel = document.getElementById('userSelect');
+      const current = sel.value || 'usr-victor';
+
+      usersCache.forEach(u => {
+        USER_PROFILES[u._id] = {
+          name: u.nome,
+          email: u.email,
+          cpf: u.cpf_mask,
+          cidade: u.cidade || 'Brasília/DF',
+          tier: u.tier || 'Verificado',
+          device: u.device_padrao || `dev-${u._id}`,
+          card: u.card_hash || 'card-hash-5555',
+          hint: u.perfil_risco || `${u.tier || 'Cliente'} · ${u.cidade || 'Brasil'} · CPF ${u.cpf_mask || ''}`,
+        };
+      });
+
+      TRANSFER_TARGETS = usersCache.map(u => ({
+        id: u._id,
+        label: `${u.nome} (${u._id})`,
+      }));
+
+      const legit = usersCache.filter(u => !u._id.includes('cambista') && !u._id.includes('laranja'));
+      const suspects = usersCache.filter(u => u._id.includes('cambista') || u._id.includes('laranja'));
+
+      sel.innerHTML = `
+        <optgroup label="Compradores Verificados (${legit.length})" class="bg-dark-surface text-dark-on-surface">
+          ${legit.map(u => `<option value="${u._id}" class="bg-dark-surface text-dark-on-surface">${u.nome} (${u._id} · ${u.tier || 'Fã'})</option>`).join('')}
+        </optgroup>
+        <optgroup label="Contas Monitoradas / Antifraude (${suspects.length})" class="bg-dark-surface text-accent-orange">
+          ${suspects.map(u => `<option value="${u._id}" class="bg-dark-surface text-accent-orange">⚠ ${u.nome} (${u._id})</option>`).join('')}
+        </optgroup>
+      `;
+
+      if (usersCache.some(u => u._id === current)) {
+        sel.value = current;
+      } else if (usersCache.length) {
+        sel.value = usersCache[0]._id;
+      }
+      applyUserProfile();
+    }
+
+    async function createNewUserPrompt() {
+      const nome = window.prompt('Nome completo do novo usuário (salvo no MongoDB):');
+      if (!nome || !nome.trim()) return;
+      const cidade = window.prompt('Cidade/UF (opcional):', 'Brasília/DF') || 'Brasília/DF';
+      try {
+        const created = await api('/api/users', 'POST', { nome: nome.trim(), cidade });
+        await loadUsers();
+        document.getElementById('userSelect').value = created._id;
+        applyUserProfile();
+        showToast(`Usuário ${created.nome} (${created._id}) criado no MongoDB!`);
+        refreshAll();
+      } catch (e) {
+        showToast(e.message, true);
+      }
+    }
 
     function showToast(msg, isError = false) {
       const el = document.getElementById('toast');
@@ -1304,8 +1350,7 @@
       } catch (e) { showToast(e.message, true); }
     }
 
-    applyUserProfile();
-    refreshAll();
+    loadUsers().then(() => refreshAll());
   </script>
 </body>
 </html>

@@ -51,6 +51,26 @@ function createApp(dbModes = {}) {
     res.json(users);
   });
 
+  app.post('/api/users', async (req, res) => {
+    const { nome, email, cidade = 'Brasília/DF', tier = 'Verificado', device_padrao, card_hash } = req.body;
+    if (!nome) return res.status(400).json({ error: 'Nome do usuario e obrigatorio' });
+    const slug = nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 14);
+    const id = `usr-${slug || 'novo'}-${Math.floor(100 + Math.random() * 900)}`;
+    const userDoc = {
+      _id: id,
+      nome,
+      email: email || `${slug}@ticketspulse.io`,
+      cpf_mask: `***.${Math.floor(100 + Math.random() * 899)}.${Math.floor(100 + Math.random() * 899)}-**`,
+      cidade,
+      tier,
+      device_padrao: device_padrao || `dev-web-${slug}`,
+      card_hash: card_hash || `card-hash-${Math.floor(1000 + Math.random() * 8999)}`,
+      perfil_risco: 'Novo usuário cadastrado via MongoDB',
+    };
+    await mongoStore.upsertUser(userDoc);
+    res.status(201).json(userDoc);
+  });
+
   // 2. Fila virtual (Redis Sorted Set: ZADD / ZRANK)
   app.post('/api/queue/enter', async (req, res) => {
     const { eventoId, usuarioId } = req.body;

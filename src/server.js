@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
   const dbModes = await initAllDatabases();
-  await seedData();
+  await seedData({ prefillQueue: true });
 
   const app = createApp(dbModes);
   app.listen(PORT, () => {
